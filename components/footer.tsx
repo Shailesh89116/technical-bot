@@ -4,7 +4,7 @@ import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone, MapPin } from "luc
 export function Footer() {
   return (
     <footer className="border-t bg-background">
-      <div className="container py-12">
+      <div className="py-12 px-6">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
             <h3 className="mb-4 text-lg font-medium">Nature Light®</h3>

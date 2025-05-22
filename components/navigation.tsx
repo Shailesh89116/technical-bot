@@ -21,7 +21,7 @@ export function Navigation() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="flex h-16 items-center justify-between md:px-60">
-        <div className="flex items-center gap-6 md:gap-10">
+        <div className="flex items-center gap-6 md:gap-10 w-full justify-center">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon" aria-label="Menu">
@@ -48,9 +48,12 @@ export function Navigation() {
               </nav>
             </SheetContent>
           </Sheet>
+          <div className="flex justify-start w-1/4">
+            
           <Link href="/" className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-primary">Nature Light®</span>
+            <span className="text-xl font-bold text-[#1f504b]">Nature Light®</span>
           </Link>
+          </div>
           <NavigationMenu className="hidden md:flex">
             <NavigationMenuList>
               <NavigationMenuItem>

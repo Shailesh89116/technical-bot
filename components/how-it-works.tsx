@@ -21,7 +21,7 @@ export function HowItWorks() {
 
   return (
     <section className="bg-primary/5 py-16">
-      <div className="container">
+      <div className="">
         <h2 className="mb-12 text-center text-3xl font-bold tracking-tight md:text-4xl">How It Works</h2>
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {steps.map((step, index) => (
