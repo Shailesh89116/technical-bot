@@ -99,7 +99,7 @@ export function FeaturedProducts() {
   }, [])
 
   return (
-    <section ref={containerRef} className="relative py-32 px-4 overflow-hidden">
+    <section ref={containerRef} className="relative py-16 px-4 overflow-hidden">
       {/* Gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-gray-50 via-white to-gray-50 z-0" />
 
@@ -129,7 +129,7 @@ export function FeaturedProducts() {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="relative mb-3"
           >
-            <span className="inline-block px-4 py-1.5 bg-gray-900 bg-opacity-5 rounded-full text-xs uppercase tracking-widest font-medium text-gray-700 mb-4">
+            <span className="inline-block px-4 py-1.5 bg-gray-200 bg-opacity-5 rounded-full text-xs uppercase tracking-widest font-medium text-gray-700 mb-4">
               Premium Selection
             </span>
           </motion.div>
@@ -161,13 +161,13 @@ export function FeaturedProducts() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex justify-center mb-12 overflow-x-auto pb-2 scrollbar-hide"
           >
-            <div className="inline-flex rounded-full bg-white p-1.5 shadow-lg shadow-gray-200/50 backdrop-blur-sm">
+            <div className="inline-flex rounded-full bg-white p-1 sm:p-1.5 shadow-lg shadow-gray-200/50 backdrop-blur-sm min-w-max">
               {categories.map((category, index) => (
                 <motion.button
                   key={category.id}
                   onClick={() => setActiveCategory(category.id)}
                   className={cn(
-                    "relative px-8 py-3 text-sm font-medium rounded-full transition-all duration-500",
+                    "relative px-4 sm:px-6 md:px-8 py-2.5 sm:py-3 text-xs sm:text-sm font-medium rounded-full transition-all duration-500 whitespace-nowrap",
                     activeCategory === category.id ? "text-white" : "text-gray-500 hover:text-gray-800",
                   )}
                   whileHover={{ scale: 1.05 }}

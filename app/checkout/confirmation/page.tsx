@@ -52,7 +52,7 @@ export default function OrderConfirmationPage() {
   }
 
   return (
-    <div className="container py-8 md:py-12">
+    <div className="px-8 py-8 md:py-12">
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 flex flex-col items-center text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">

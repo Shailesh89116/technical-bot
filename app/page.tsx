@@ -5,7 +5,7 @@ import { HowItWorks } from "@/components/how-it-works"
 
 export default function Home() {
   return (
-    <div className="flex flex-col gap-16 pb-16">
+    <div className="flex flex-col gap-0 pb-16">
       <HeroBanner />
       <BenefitsSection />
       <FeaturedProducts />
