@@ -36,7 +36,7 @@ export function HeroBanner() {
         "/shinkolite.jpg",
       title: "Luxury & Clarity",
       subtitle: "Transform your spaces with our premium acrylic solutions",
-      textColor: "text-gray-800",
+      textColor: "text-text-white",
     },
     {
       image:

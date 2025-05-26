@@ -151,7 +151,7 @@ export function Navigation() {
                   </NavigationMenuContent>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/products" legacyBehavior passHref>
+                  <Link href="/products" passHref>
                     <NavigationMenuLink
                       className={`${navigationMenuTriggerStyle()} ${
                         isDarkHeader
@@ -164,7 +164,7 @@ export function Navigation() {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/about" legacyBehavior passHref>
+                  <Link href="/about" passHref>
                     <NavigationMenuLink
                       className={`${navigationMenuTriggerStyle()} ${
                         isDarkHeader
@@ -177,7 +177,7 @@ export function Navigation() {
                   </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
-                  <Link href="/support" legacyBehavior passHref>
+                  <Link href="/support" passHref>
                     <NavigationMenuLink
                       className={`${navigationMenuTriggerStyle()} ${
                         isDarkHeader
