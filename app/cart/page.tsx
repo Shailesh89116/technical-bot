@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react/no-unescaped-entities */
 "use client"
 
 import { useState } from "react"
@@ -43,7 +45,7 @@ export default function CartPage() {
     setCartItems(cartItems.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item)))
   }
 
-  const removeItem = (id) => {
+  const removeItem = (id : any) => {
     setCartItems(cartItems.filter((item) => item.id !== id))
   }
 

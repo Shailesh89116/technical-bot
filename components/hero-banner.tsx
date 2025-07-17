@@ -29,14 +29,14 @@ export function HeroBanner() {
       title: "Transparent Elegance",
       subtitle: "Premium acrylic roofing solutions for modern spaces",
       textColor: "text-white",
-      textShadow: true,
+      // textShadow: true,
     },
     {
       image:
         "/shinkolite.jpg",
       title: "Luxury & Clarity",
       subtitle: "Transform your spaces with our premium acrylic solutions",
-      textColor: "text-text-white",
+      textColor: "text-white",
     },
     {
       image:
@@ -44,7 +44,7 @@ export function HeroBanner() {
       title: "Bring Nature In",
       subtitle: "Experience the perfect blend of indoors and outdoors",
       textColor: "text-white",
-      textShadow: true,
+      // textShadow: true,
     },
     {
       image:
@@ -52,7 +52,7 @@ export function HeroBanner() {
       title: "Heat Cut Series",
       subtitle: "Advanced protection with superior clarity",
       textColor: "text-white",
-      textShadow: true,
+      // textShadow: true,
     },
   ]
 
@@ -140,7 +140,7 @@ export function HeroBanner() {
               index === currentIndex ? "opacity-100" : "opacity-0 absolute"
             }`}
           >
-            <h2 className={cn("mb-1 text-lg font-medium tracking-wide md:text-xl", item.textColor)}>Nature Light</h2>
+            
             <h1
               className={cn(
                 "mb-2 text-5xl font-semibold tracking-tight md:text-6xl lg:text-7xl",
@@ -179,14 +179,14 @@ export function HeroBanner() {
         className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/40"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="h-6 w-6" />
+        <ChevronLeft className="h-3 md:h-6 w-3 md:w-6" />
       </button>
       <button
         onClick={goToNextSlide}
         className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/40"
         aria-label="Next slide"
       >
-        <ChevronRight className="h-6 w-6" />
+        <ChevronRight className="h-3 md:h-6 w-3 md:w-6" />
       </button>
 
       {/* Indicators */}
