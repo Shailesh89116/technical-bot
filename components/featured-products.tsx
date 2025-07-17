@@ -143,33 +143,36 @@ export function FeaturedProducts() {
               </Link>
             </div>
           </div>
-          <div className="order-1 md:order-2">
-            <div className="relative aspect-square overflow-hidden rounded-3xl bg-gray-100">
-              <Image
-                src="/heatcut.jpg"
-                alt="Clear Acrylic Sheet"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
+            <div className="order-1 md:order-2">
+                <div className="relative aspect-[4/3] md:aspect-[3/2] overflow-hidden rounded-2xl md:rounded-3xl bg-gray-100 group">
+                  <Image
+                    src="/heatcut.jpg"
+                    alt="Clear Acrylic Sheet"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                </div>
+              </div>
         </div>
 
-        {/* Product 2 - Apple Style */}
-        <div className="mb-32 grid items-center gap-8 md:grid-cols-2 md:gap-12">
-          <div>
-            <div className="relative aspect-square overflow-hidden rounded-3xl bg-gray-100">
-              <Image
-          src="/prime.jpg"
-                alt="Frosted Acrylic Sheet"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
-          <div>
-            <h3 className="mb-2 text-3xl font-semibold">Prime Series</h3>
-            <p className="mb-4 text-xl text-gray-500">
+      {/* Product 2 - Frosted Acrylic */}
+          <div className="mb-20 md:mb-32 animate-slide-up-delay">
+            <div className="grid gap-6 md:gap-8 lg:gap-12 md:grid-cols-2 items-center">
+              <div className="order-1">
+                <div className="relative aspect-[4/3] md:aspect-[3/2] overflow-hidden rounded-2xl md:rounded-3xl bg-gray-100 group">
+                 <Image
+                    src="/prime.jpg"
+                    alt="Clear Acrylic Sheet"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                </div>
+              </div>
+              <div className="order-2">
+                <h3 className="mb-2 text-2xl md:text-3xl font-semibold">Frosted Acrylic</h3>
+                <p className="mb-4 text-xl text-gray-500">
               Elegant diffusion. Sophisticated finish.
             </p>
             <p className="mb-6 text-lg leading-relaxed text-gray-600">
@@ -177,23 +180,25 @@ export function FeaturedProducts() {
               maintaining structural integrity. Perfect for lighting and
               architectural applications.
             </p>
-            <div className="flex items-center gap-6 text-lg text-blue-500">
-              <Link
-                href="/shop/frosted"
-                className="flex items-center hover:underline"
-              >
-                Shop Frosted <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
-              <Link
-                href="/specs/frosted"
-                className="flex items-center hover:underline"
-              >
-                View specs <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 text-base md:text-lg text-blue-500">
+                  <Link
+                    href="/shop/frosted"
+                    className="flex items-center hover:underline transition-all duration-300 hover:text-blue-600 group"
+                  >
+                    Shop Frosted{" "}
+                    <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
+                  <Link
+                    href="/specs/frosted"
+                    className="flex items-center hover:underline transition-all duration-300 hover:text-blue-600 group"
+                  >
+                    View specs{" "}
+                    <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
         {/* Product 3 - Apple Style */}
         <div className="grid items-center gap-8 md:grid-cols-2 md:gap-12">
           <div className="order-2 md:order-1">
@@ -219,16 +224,17 @@ export function FeaturedProducts() {
               </Link>
             </div>
           </div>
-          <div className="order-1 md:order-2">
-            <div className="relative aspect-square overflow-hidden rounded-3xl bg-gray-100">
-              <Image
-                src="/superior.jpg"
-                alt="Black Acrylic Sheet"  
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
+            <div className="order-1 md:order-2">
+                <div className="relative aspect-[4/3] md:aspect-[3/2] overflow-hidden rounded-2xl md:rounded-3xl bg-gray-100 group">
+                  <Image
+                    src="/superior.jpg"
+                    alt="Clear Acrylic Sheet"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                </div>
+              </div>
         </div>
       </div>
       <motion.div
