@@ -84,7 +84,7 @@ export function Navigation() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-6 md:gap-10">
             <Link href="/" className={`text-xl font-medium ${isDarkHeader ? "text-white" : "text-gray-900"}`}>
-             <Image src="/shinkolite-logo.png" alt="Shinkolite" height={300} width={600} className="h-auto w-auto"/>
+             <Image src="/shinkolite-logo.png" alt="Shinkolite" height={100} width={200} className="h-auto w-auto"/>
             </Link>
 
             {/* Desktop Navigation with Shop Dropdown */}
