@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
-import { Search, ShoppingBag, X, User } from "lucide-react"
+import { ShoppingBag, X, User } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -84,7 +84,7 @@ export function Navigation() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-6 md:gap-10">
             <Link href="/" className={`text-xl font-medium ${isDarkHeader ? "text-white" : "text-gray-900"}`}>
-             <Image src="/shinkolite-logo.png" alt="Shinkolite" height={100} width={200} className="h-auto w-auto"/>
+             <Image src="/shinkolite-logo.png" alt="Shinkolite" height={100} width={200} className="h-20 w-auto"/>
             </Link>
 
             {/* Desktop Navigation with Shop Dropdown */}
@@ -217,15 +217,6 @@ export function Navigation() {
               </div>
             ) : (
               <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsSearchOpen(true)}
-                  aria-label="Search"
-                  className={isDarkHeader ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"}
-                >
-                  <Search className="h-5 w-5" />
-                </Button>
                 <Link href="/account">
                   <Button
                     variant="ghost"
@@ -268,8 +259,8 @@ export function Navigation() {
       {menuOpen && (
         <div className="fixed inset-0 z-[100] flex flex-col bg-black">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
-            <Link href="/" className="text-xl font-medium text-white" onClick={handleMenuClose}>
-              Nature Light®
+            <Link href="/">
+             <Image src="/shinkolite-logo.png" alt="Shinkolite" height={100} width={200} className="h-20 w-auto"/>
             </Link>
             <Button
               variant="ghost"

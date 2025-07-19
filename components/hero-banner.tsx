@@ -56,7 +56,7 @@ export function HeroBanner() {
     },
   ]
 
-  useEffect(() => {
+   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY)
     }
@@ -125,14 +125,18 @@ export function HeroBanner() {
         </div>
       ))}
 
-      {/* Content */}
+      {/* Content - Fixed positioning with high z-index */}
       <div
-        className="relative z-10 flex flex-col items-center text-center"
+        className="relative z-50 flex flex-col items-center text-center pointer-events-none"
         style={{
           opacity: 1 - scrollY * 0.002,
           transform: `translateY(${scrollY * 0.3}px)`,
         }}
       >
+        {/* Brand Text - Always visible */}
+        <h2 className="mb-1 text-lg font-medium tracking-wide md:text-xl text-white text-shadow">Nature Light</h2>
+
+        {/* Dynamic Content */}
         {carouselItems.map((item, index) => (
           <div
             key={index}
@@ -140,7 +144,6 @@ export function HeroBanner() {
               index === currentIndex ? "opacity-100" : "opacity-0 absolute"
             }`}
           >
-            
             <h1
               className={cn(
                 "mb-2 text-5xl font-semibold tracking-tight md:text-6xl lg:text-7xl",
@@ -162,40 +165,51 @@ export function HeroBanner() {
           </div>
         ))}
 
-        {/* Fixed Buttons */}
-        <div className="flex items-center gap-6 text-lg">
-          <Button asChild size="lg" className="bg-[#1f504b] hover:bg-[#1f504b]/90">
-            <Link href="/shop">Shop Now</Link>
+        {/* Fixed Buttons - Always clickable with high z-index */}
+        <div className="flex items-center gap-6 text-lg pointer-events-auto relative z-[60]">
+          <Button asChild size="lg" className="bg-[#1f504b] hover:bg-[#1f504b]/90 relative z-[70] pointer-events-auto">
+            <Link href="/shop" className="pointer-events-auto">
+              Shop Now
+            </Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="bg-white/10 text-white hover:bg-white/20">
-            <Link href="/resources">View Resources</Link>
+          <Button
+            asChild
+            size="lg"
+            variant="outline"
+            className="bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm relative z-[70] pointer-events-auto"
+          >
+            <Link href="/resources" className="pointer-events-auto">
+              View Resources
+            </Link>
           </Button>
         </div>
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - High z-index */}
       <button
         onClick={goToPrevSlide}
-        className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/40"
+        className="absolute left-4 top-1/2 z-40 -translate-y-1/2 rounded-full bg-black/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/40 pointer-events-auto"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="h-3 md:h-6 w-3 md:w-6" />
+        <ChevronLeft className="h-6 w-6" />
       </button>
       <button
         onClick={goToNextSlide}
-        className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/40"
+        className="absolute right-4 top-1/2 z-40 -translate-y-1/2 rounded-full bg-black/20 p-2 text-white backdrop-blur-sm transition-all hover:bg-black/40 pointer-events-auto"
         aria-label="Next slide"
       >
-        <ChevronRight className="h-3 md:h-6 w-3 md:w-6" />
+        <ChevronRight className="h-6 w-6" />
       </button>
 
-      {/* Indicators */}
-      <div className="absolute bottom-8 left-0 z-10 flex w-full justify-center gap-2">
+      {/* Indicators - High z-index */}
+      <div className="absolute bottom-8 left-0 z-40 flex w-full justify-center gap-2">
         {carouselItems.map((_, index) => (
           <button
             key={index}
             onClick={() => goToSlide(index)}
-            className={`h-2 w-8 rounded-full transition-all ${index === currentIndex ? "bg-white" : "bg-white/40"}`}
+            className={`h-2 w-8 rounded-full transition-all pointer-events-auto ${
+              index === currentIndex ? "bg-white" : "bg-white/40"
+            }`}
             aria-label={`Go to slide ${index + 1}`}
           />
         ))}
