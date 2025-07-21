@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Facebook, Instagram, Twitter, Linkedin, Mail, Phone, MapPin } from "lucide-react"
+import Image from "next/image"
 
 export function Footer() {
   return (
@@ -7,10 +8,9 @@ export function Footer() {
       <div className="py-12 px-6">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h3 className="mb-4 text-lg font-medium">Nature Light®</h3>
+            <Image src="/shinkolite-logo.png" alt="Shinkolite" height={100} width={200} className="h-20 w-auto"/>
             <p className="mb-4 text-sm text-muted-foreground">
-              Premium acrylic sheets for all your design and construction needs. Founded in 1955, focused on quality and
-              innovation.
+              Premium acrylic sheets for all your design and construction needs. 
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-muted-foreground hover:text-primary">
@@ -91,11 +91,11 @@ export function Footer() {
             <ul className="grid gap-4 text-sm">
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 h-4 w-4 text-primary" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 9876543210</span>
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="mt-0.5 h-4 w-4 text-primary" />
-                <span>info@naturelight.com</span>
+                <span>info@aclindia.co</span>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 text-primary" />
