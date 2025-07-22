@@ -1,7 +1,12 @@
-import CategoryPage from "@/components/shop/all-product";
+import CategoryPage from "@/components/shop/category-grid";
 import { Suspense } from "react";
 
-const ShopPage = async () => {
+const ShopPage = async ({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}) => {
+  const category = (await params).category;
 
   return (
     <Suspense
@@ -14,10 +19,9 @@ const ShopPage = async () => {
         </div>
       }
     >
-      <CategoryPage/>
+      <CategoryPage category={category} />
     </Suspense>
   );
 };
 
 export default ShopPage;
- 
