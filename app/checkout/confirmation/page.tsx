@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { useEffect, useState } from "react"
@@ -10,50 +11,50 @@ import { Separator } from "@/components/ui/separator"
 import { CheckCircle2, Printer, ArrowRight } from "lucide-react"
 
 export default function OrderConfirmationPage() {
-  const searchParams = useSearchParams()
-  const orderId = searchParams.get("orderId")
-  const [order, setOrder] = useState(null)
+  // const searchParams = useSearchParams()
+  // const orderId = searchParams.get("orderId")
+  // const [order, setOrder] = useState(null)
 
-  useEffect(() => {
-    // Retrieve order from session storage
-    const storedOrder = sessionStorage.getItem("lastOrder")
-    if (storedOrder) {
-      setOrder(JSON.parse(storedOrder))
-    }
-  }, [])
+  // useEffect(() => {
+  //   // Retrieve order from session storage
+  //   const storedOrder = sessionStorage.getItem("lastOrder")
+  //   if (storedOrder) {
+  //     setOrder(JSON.parse(storedOrder))
+  //   }
+  // }, [])
 
-  if (!order) {
-    return (
-      <div className="container py-16 text-center">
-        <h1 className="text-3xl font-bold">Order Confirmation</h1>
-        <p className="mt-4">Loading order details...</p>
-      </div>
-    )
-  }
+  // if (!order) {
+  //   return (
+  //     <div className="container py-16 text-center">
+  //       <h1 className="text-3xl font-bold">Order Confirmation</h1>
+  //       <p className="mt-4">Loading order details...</p>
+  //     </div>
+  //   )
+  // }
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString)
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date)
-  }
+  // const formatDate = (dateString) => {
+  //   const date = new Date(dateString)
+  //   return new Intl.DateTimeFormat("en-US", {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   }).format(date)
+  // }
 
-  const estimatedDelivery = () => {
-    const date = new Date()
-    const days = order.shipping.method === "express" ? 3 : 7
-    date.setDate(date.getDate() + days)
-    return new Intl.DateTimeFormat("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date)
-  }
+  // const estimatedDelivery = () => {
+  //   const date = new Date()
+  //   const days = order.shipping.method === "express" ? 3 : 7
+  //   date.setDate(date.getDate() + days)
+  //   return new Intl.DateTimeFormat("en-US", {
+  //     year: "numeric",
+  //     month: "long",
+  //     day: "numeric",
+  //   }).format(date)
+  // }
 
   return (
     <div className="px-8 py-8 md:py-12">
-      <div className="mx-auto max-w-3xl">
+      {/* <div className="mx-auto max-w-3xl">
         <div className="mb-8 flex flex-col items-center text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
             <CheckCircle2 className="h-8 w-8 text-primary" />
@@ -195,7 +196,7 @@ export default function OrderConfirmationPage() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }
