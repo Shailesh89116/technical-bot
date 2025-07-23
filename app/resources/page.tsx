@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -181,7 +182,7 @@ export default function ResourcesPage() {
   )
 }
 
-function ResourceCard({ item, icon: Icon }) {
+function ResourceCard({ item, icon: Icon }:any) {
   return (
     <Card>
       <CardContent className="p-6">

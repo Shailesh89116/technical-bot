@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Heart, ChevronLeft, ChevronRight, Plus, Minus } from "lucide-react"
 
-export default function ProductPage({ params }: { params: { id: string } }) {
+export default function ProductPage() {
   const [selectedImage, setSelectedImage] = useState(0)
   const [selectedSize, setSelectedSize] = useState("4x8")
   const [quantity, setQuantity] = useState(1)
   const [isWishlisted, setIsWishlisted] = useState(false)
 
    const product = {
-    id: params.id,
+    id: 1,
     name: "Clear 5mm Acrylic Sheet",
         tagline: "Engineered for perfection.",
     description:
