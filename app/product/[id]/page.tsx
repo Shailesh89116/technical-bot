@@ -35,9 +35,8 @@ specs: [
       { label: "Thickness", value: "5mm" },
       { label: "Size", value: "4' × 8'" },
       { label: "Weight", value: "2.4 kg/m²" },
-      { label: "Transmission", value: "92%" },
-      { label: "Temperature", value: "-40°C to +80°C" },
-      { label: "Warranty", value: "10 years" },
+      { label: "Transmission", value: "70%" },
+      { label: "Heat Cut", value: "48%" },
     ],
     applications: [
       "Architectural glazing",

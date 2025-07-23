@@ -189,7 +189,8 @@ export default function CartPage() {
                   </div>
 
                   <Button asChild className="mt-6 w-full rounded-full bg-black py-6 text-base hover:bg-gray-800">
-                    <Link href="/checkout">Proceed to Checkout</Link>
+                    {/* <Link href="/checkout">Proceed to Checkout</Link> */}
+                    Proceed to Checkout
                   </Button>
                 </div>
 

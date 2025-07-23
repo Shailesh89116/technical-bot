@@ -151,8 +151,9 @@ export function Navigation() {
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
+         
                 <NavigationMenuItem>
-                  <Link href="/about" passHref>
+                  <Link href="/contact" passHref>
                     <NavigationMenuLink
                       className={`${navigationMenuTriggerStyle()} ${
                         isDarkHeader
@@ -160,20 +161,7 @@ export function Navigation() {
                           : "bg-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                       }`}
                     >
-                      About
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link href="/support" passHref>
-                    <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} ${
-                        isDarkHeader
-                          ? "bg-transparent text-white/80 hover:text-white hover:bg-white/10"
-                          : "bg-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                      }`}
-                    >
-                      Support
+                      Contact
                     </NavigationMenuLink>
                   </Link>
                 </NavigationMenuItem>
@@ -267,26 +255,13 @@ export function Navigation() {
             >
               Shop
             </Link>
-            <Link
-              href="/products"
-              className="text-2xl font-medium text-white hover:text-gray-300 transition-colors"
-              onClick={handleMenuClose}
-            >
-              Products
-            </Link>
-            <Link
-              href="/about"
-              className="text-2xl font-medium text-white hover:text-gray-300 transition-colors"
-              onClick={handleMenuClose}
-            >
-              About
-            </Link>
+          
             <Link
               href="/support"
               className="text-2xl font-medium text-white hover:text-gray-300 transition-colors"
               onClick={handleMenuClose}
             >
-              Support
+              Contact
             </Link>
           </div>
         </div>

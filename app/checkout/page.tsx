@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { useState } from "react"
@@ -21,7 +23,7 @@ export default function CheckoutPage() {
   const [shippingMethod, setShippingMethod] = useState("standard")
   const [paymentMethod, setPaymentMethod] = useState("credit-card")
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formErrors, setFormErrors] = useState({})
+  const [formErrors, setFormErrors] = useState<Record<string, string | null>>({})
 
   // Form state
   const [formData, setFormData] = useState({
@@ -74,7 +76,7 @@ export default function CheckoutPage() {
     { number: 4, title: "Review", icon: CheckCircle2 },
   ]
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e:any) => {
     const { id, value } = e.target
     setFormData({ ...formData, [id]: value })
     if (formErrors[id]) {
@@ -106,14 +108,9 @@ export default function CheckoutPage() {
   }
 
   const validateShippingInfo = () => {
-    const errors = {}
-    const requiredFields = ["firstName", "lastName", "email", "phone", "address", "city", "zip"]
+    const errors: Record<string, string> = {}
 
-    requiredFields.forEach((field) => {
-      if (!formData[field]) {
-        errors[field] = "This field is required"
-      }
-    })
+
 
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
       errors.email = "Please enter a valid email address"
@@ -131,7 +128,7 @@ export default function CheckoutPage() {
   }
 
   const validatePaymentInfo = () => {
-    const errors = {}
+    const errors: Record<string, string> = {}
 
     if (!formData.cardNumber) {
       errors.cardNumber = "Card number is required"
@@ -753,7 +750,7 @@ export default function CheckoutPage() {
                     <div className="flex-1">
                       <h3 className="font-medium text-gray-900">{item.name}</h3>
                       <p className="text-sm text-gray-600">{item.specs}</p>
-                      <p className="mt-1 font-medium text-gray-900">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="mt-1 font-medium text-gray-900">₹{(item.price * item.quantity).toFixed(2)}</p>
                     </div>
                   </div>
                 ))}
@@ -765,20 +762,20 @@ export default function CheckoutPage() {
               <div className="space-y-3">
                 <div className="flex justify-between text-gray-700">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>₹{subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-gray-700">
+                {/* <div className="flex justify-between text-gray-700">
                   <span>Shipping</span>
                   <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
-                </div>
+                </div> */}
                 <div className="flex justify-between text-gray-700">
                   <span>Tax</span>
-                  <span>${tax.toFixed(2)}</span>
+                  <span>₹{tax.toFixed(2)}</span>
                 </div>
                 <Separator className="my-4" />
                 <div className="flex justify-between text-xl font-semibold text-gray-900">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>₹{total.toFixed(2)}</span>
                 </div>
               </div>
 
