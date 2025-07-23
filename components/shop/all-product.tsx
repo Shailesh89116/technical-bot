@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 import { useState, useMemo } from "react"
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -112,9 +111,9 @@ export default function CategoryPage() {
   }
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-IN", {
       style: "currency",
-      currency: "USD",
+      currency: "INR",
       maximumFractionDigits: 0,
     }).format(price)
   }
@@ -141,24 +140,6 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="fixed top-0 z-50 w-full bg-white/80 backdrop-blur-xl">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="flex h-16 items-center justify-between">
-            <Link href="/" className="text-xl font-semibold">
-              Store
-            </Link>
-            <div className="flex items-center space-x-6 text-sm">
-              <Link href="/products" className="text-gray-900">
-                Products
-              </Link>
-              <Link href="/support" className="text-gray-600 hover:text-gray-900">
-                Support
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero */}
       <div className="pt-16">
@@ -276,7 +257,7 @@ export default function CategoryPage() {
 
             {/* Brand */}
             <div className="flex items-center space-x-3">
-              <span className="text-sm text-gray-600 w-20">Brand</span>
+              <span className="text-sm text-gray-600 w-20">Category</span>
               <div className="flex flex-wrap gap-2">
                 {filterOptions.brands.map((brand) => (
                   <FilterChip

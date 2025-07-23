@@ -12,7 +12,7 @@ const categories = [
     image: "/sanitary-banner.jpg",
     gradient: "black",
     textColor: "text-white",
-    href: "/shop?category=sanitary",
+    href: "/shop/sanitary",
   },
   {
     id: "interior",
@@ -20,7 +20,7 @@ const categories = [
     image: "/advertise.jpg",
     gradient: "from-slate-700 via-slate-800 to-slate-900",
     textColor: "text-white",
-    href: "/shop?category=interior",
+    href: "/shop/interior",
   },
   {
     id: "advertising",
@@ -28,7 +28,7 @@ const categories = [
     image: "/interior.jpeg",
     gradient: "from-slate-700 via-slate-800 to-slate-900",
     textColor: "text-white",
-    href: "/shop?category=advertising",
+    href: "/shop/advertising",
   },
   {
     id: "building-materials",
@@ -36,7 +36,7 @@ const categories = [
     image: "/shinkolite.jpg",
     gradient: "from-slate-700 via-slate-800 to-slate-900",
     textColor: "text-white",
-    href: "/shop?category=building-materials",
+    href: "/shop/building-materials",
   },
 ]
 
@@ -234,14 +234,14 @@ export function ProductCategories() {
             >
               Get Expert Consultation
             </Link>
-            <Link
+            {/* <Link
               href="/quote"
               className="inline-flex items-center justify-center px-8 py-3 text-base font-medium text-black bg-transparent border border-gray-300 rounded-full hover:border-gray-400 transition-all duration-300 hover:scale-105 will-change-transform transform-gpu"
             >
               Request Quote
-            </Link>
+            </Link> */}
           </div>
-          <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-gray-500">
+          {/* <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-gray-500">
             <span className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full" />
               Free consultation
@@ -254,7 +254,7 @@ export function ProductCategories() {
               <div className="w-2 h-2 bg-purple-500 rounded-full" />
               Expert installation
             </span>
-          </div>
+          </div> */}
         </div>
       </div>
 

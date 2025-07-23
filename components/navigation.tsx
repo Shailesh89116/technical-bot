@@ -94,8 +94,8 @@ export function Navigation() {
                   <NavigationMenuTrigger
                     className={`${
                       isDarkHeader
-                        ? "bg-transparent text-white/80 hover:text-white hover:bg-white/10 data-[state=open]:bg-white/10 data-[state=open]:text-white"
-                        : "bg-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:text-gray-900"
+                        ? "bg-transparent text-white/80  data-[state=open]:bg-white/10 data-[state=open]:text-white"
+                        : "bg-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-100 data-[state=open]:bg-white/10 data-[state=open]:text-white"
                     }`}
                   >
                     Shop
@@ -105,10 +105,10 @@ export function Navigation() {
                       <li className="row-span-3">
                         <NavigationMenuLink asChild>
                           <Link
-                            href="/shop/acrylic-sheets"
+                            href="/shop/building-materials"
                             className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-gray-900 to-black p-6 no-underline outline-none focus:shadow-md"
                           >
-                            <div className="mt-4 mb-2 text-lg font-medium text-white">Acrylic Sheets</div>
+                            <div className="mt-4 mb-2 text-lg font-medium text-white">Acrylic for Building Material</div>
                             <p className="text-sm leading-tight text-white/90">
                               High-clarity acrylic with 92% light transmission, UV-stabilized for outdoor use
                             </p>
@@ -117,10 +117,10 @@ export function Navigation() {
                       </li>
                       <li>
                         <Link
-                          href="/shop/acrylic-sheets?thickness=2mm"
+                          href="/shop/sanitary"
                           className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
-                          <div className="text-sm font-medium leading-none">Thin Sheets (2mm)</div>
+                          <div className="text-sm font-medium leading-none">Acrylic for Sanitary</div>
                           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                             Perfect for crafts and small displays
                           </p>
@@ -128,10 +128,10 @@ export function Navigation() {
                       </li>
                       <li>
                         <Link
-                          href="/shop/acrylic-sheets?thickness=5mm"
+                          href="/shop/interior"
                           className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
-                          <div className="text-sm font-medium leading-none">Medium Sheets (5mm)</div>
+                          <div className="text-sm font-medium leading-none">Acrylic for Interior</div>
                           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                             Ideal for signage and displays
                           </p>
@@ -139,10 +139,10 @@ export function Navigation() {
                       </li>
                       <li>
                         <Link
-                          href="/shop/acrylic-sheets?thickness=10mm"
+                          href="/shop/advertise"
                           className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
-                          <div className="text-sm font-medium leading-none">Thick Sheets (10mm)</div>
+                          <div className="text-sm font-medium leading-none">Acrylic for Advertise</div>
                           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                             For heavy-duty applications and furniture
                           </p>
@@ -150,19 +150,6 @@ export function Navigation() {
                       </li>
                     </ul>
                   </NavigationMenuContent>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <Link href="/products" passHref>
-                    <NavigationMenuLink
-                      className={`${navigationMenuTriggerStyle()} ${
-                        isDarkHeader
-                          ? "bg-transparent text-white/80 hover:text-white hover:bg-white/10"
-                          : "bg-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-                      }`}
-                    >
-                      Products
-                    </NavigationMenuLink>
-                  </Link>
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <Link href="/about" passHref>

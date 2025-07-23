@@ -1,127 +1,57 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
-
-import type React from "react"
-import { useState, useEffect } from "react"
-import Link from "next/link"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { Slider } from "@/components/ui/slider"
-import { Separator } from "@/components/ui/separator"
-import {
-  Search,
-  ArrowUpDown,
-  Filter,
-} from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Search, SlidersHorizontal, X } from "lucide-react"
 import ProductCard from "@/components/shop/product-card"
-import { allProducts } from "@/dummy-data/allProducts"
-import { filterOptions } from "@/dummy-data/filterOptions"
+import { allProducts, productList } from "@/dummy-data/allProducts"
+import { Slider } from "../ui/slider"
+
+const getFilterOptions = () => {
+  const allThickness = new Set<string>()
+  const allFinish = new Set<string>()
+  const allBrands = new Set<string>()
+
+  productList.forEach((product) => {
+    allThickness.add(product.thickness)
+    allFinish.add(product.finish)
+    allBrands.add(product.brand)
+  })
+
+  return {
+    thickness: Array.from(allThickness).sort(),
+    finish: Array.from(allFinish).sort(),
+    brands: Array.from(allBrands).sort(),
+  }
+}
 
 interface CategoryPageProps {
   category: string;
 }
 
 export default function CategoryPage({ category }: CategoryPageProps) {
-
   const [sortBy, setSortBy] = useState("featured")
-  const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [isFilterOpen, setIsFilterOpen] = useState(false)
 
-  // Filter states
+  // Essential filters only
   const [priceRange, setPriceRange] = useState([0, 800])
   const [selectedThickness, setSelectedThickness] = useState<string[]>([])
   const [selectedFinish, setSelectedFinish] = useState<string[]>([])
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([])
   const [selectedBrands, setSelectedBrands] = useState<string[]>([])
 
-  // Temporary filter states for mobile apply functionality
-  const [tempPriceRange, setTempPriceRange] = useState([0, 800])
-  const [tempSelectedThickness, setTempSelectedThickness] = useState<string[]>([])
-  const [tempSelectedFinish, setTempSelectedFinish] = useState<string[]>([])
-  const [tempSelectedFeatures, setTempSelectedFeatures] = useState<string[]>([])
-  const [tempSelectedBrands, setTempSelectedBrands] = useState<string[]>([])
-
   const [wishlist, setWishlist] = useState<number[]>([])
-  const [hasFilterChanges, setHasFilterChanges] = useState(false)
+
+  const filterOptions = getFilterOptions()
 
   const products = allProducts[category as keyof typeof allProducts] || []
-  const currentFilterOptions = filterOptions[category as keyof typeof filterOptions] || filterOptions.sanitary
 
-  // Reset filters when category changes
-  useEffect(() => {
-    setPriceRange([0, 800])
-    setSelectedThickness([])
-    setSelectedFinish([])
-    setSelectedFeatures([])
-    setSelectedBrands([])
-    setTempPriceRange([0, 800])
-    setTempSelectedThickness([])
-    setTempSelectedFinish([])
-    setTempSelectedFeatures([])
-    setTempSelectedBrands([])
-    setSearchQuery("")
-  }, [category])
-
-  // Check if there are filter changes
-  useEffect(() => {
-    const hasChanges =
-      JSON.stringify(tempPriceRange) !== JSON.stringify(priceRange) ||
-      JSON.stringify(tempSelectedThickness) !== JSON.stringify(selectedThickness) ||
-      JSON.stringify(tempSelectedFinish) !== JSON.stringify(selectedFinish) ||
-      JSON.stringify(tempSelectedFeatures) !== JSON.stringify(selectedFeatures) ||
-      JSON.stringify(tempSelectedBrands) !== JSON.stringify(selectedBrands)
-
-    setHasFilterChanges(hasChanges)
-  }, [
-    tempPriceRange,
-    tempSelectedThickness,
-    tempSelectedFinish,
-    tempSelectedFeatures,
-    tempSelectedBrands,
-    priceRange,
-    selectedThickness,
-    selectedFinish,
-    selectedFeatures,
-    selectedBrands,
-  ])
-
-  // Initialize temp filters when opening mobile filter
-  useEffect(() => {
-    if (isFilterOpen) {
-      setTempPriceRange([...priceRange])
-      setTempSelectedThickness([...selectedThickness])
-      setTempSelectedFinish([...selectedFinish])
-      setTempSelectedFeatures([...selectedFeatures])
-      setTempSelectedBrands([...selectedBrands])
-    }
-  }, [isFilterOpen, priceRange, selectedThickness, selectedFinish, selectedFeatures, selectedBrands])
-
-  // Apply filters
-  const applyFilters = () => {
-    setPriceRange([...tempPriceRange])
-    setSelectedThickness([...tempSelectedThickness])
-    setSelectedFinish([...tempSelectedFinish])
-    setSelectedFeatures([...tempSelectedFeatures])
-    setSelectedBrands([...tempSelectedBrands])
-    setIsFilterOpen(false)
-  }
-
-  // Reset temp filters
-  const resetTempFilters = () => {
-    setTempPriceRange([0, 800])
-    setTempSelectedThickness([])
-    setTempSelectedFinish([])
-    setTempSelectedFeatures([])
-    setTempSelectedBrands([])
-  }
-
-  // Filter products based on selected filters and search
-  const filteredProducts = products.filter((product) => {
+const filteredProducts = products.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.brand.toLowerCase().includes(searchQuery.toLowerCase())
@@ -134,461 +64,395 @@ export default function CategoryPage({ category }: CategoryPageProps) {
     return matchesSearch && matchesPrice && matchesThickness && matchesFinish && matchesBrands
   })
 
-  // Sort products
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (sortBy) {
-      case "price-low":
-        return a.price - b.price
-      case "price-high":
-        return b.price - a.price
-      case "newest":
-        return b.id - a.id
-      default:
-        return 0
-    }
-  })
-
   const toggleWishlist = (productId: number) => {
     setWishlist((prev) => (prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]))
   }
 
-  const activeFiltersCount =
-    selectedThickness.length +
-    selectedFinish.length +
-    selectedFeatures.length +
-    selectedBrands.length +
-    (priceRange[0] > 0 || priceRange[1] < 800 ? 1 : 0)
+  const hasActiveFilters =
+    priceRange[0] > 0 ||
+    priceRange[1] < 800 ||
+    selectedThickness.length > 0 ||
+    selectedFinish.length > 0 ||
+    selectedBrands.length > 0
 
   const clearAllFilters = () => {
     setPriceRange([0, 800])
     setSelectedThickness([])
     setSelectedFinish([])
-    setSelectedFeatures([])
     setSelectedBrands([])
+    setSearchQuery("")
   }
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("en-IN", {
       style: "currency",
-      currency: "USD",
+      currency: "INR",
+      maximumFractionDigits: 0,
     }).format(price)
   }
 
-  const FilterSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
-    <div className="space-y-3 py-3">
-      <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">{title}</h3>
-      {children}
-    </div>
+  // Filter chip component
+  const FilterChip = ({
+    label,
+    isSelected,
+    onClick,
+  }: {
+    label: string
+    isSelected: boolean
+    onClick: () => void
+  }) => (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+        isSelected ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+      }`}
+    >
+      {label}
+    </button>
   )
 
-  const DesktopFilterContent = () => (
-    <div className="space-y-4">
-      {/* Price Range */}
-      <FilterSection title="Price">
-        <div className="space-y-4">
-          <Slider value={priceRange} onValueChange={setPriceRange} max={800} step={5} className="w-full" />
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>{formatPrice(priceRange[0])}</span>
-            <span>{formatPrice(priceRange[1])}</span>
-          </div>
-        </div>
-      </FilterSection>
 
-      <Separator />
+  function formatLabel(input: string): string {
+  return input
+    .split(/[-_]/) // Split on hyphens or underscores
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
+    .join(' ');
+}
 
-      {/* Brand Filter */}
-      <FilterSection title="Brand">
-        <div className="space-y-2 max-h-48 overflow-y-auto">
-          {currentFilterOptions.brands.map((brand) => (
-            <div key={brand} className="flex items-center space-x-2">
-              <Checkbox
-                id={`brand-${brand}`}
-                checked={selectedBrands.includes(brand)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setSelectedBrands([...selectedBrands, brand])
-                  } else {
-                    setSelectedBrands(selectedBrands.filter((b) => b !== brand))
-                  }
-                }}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={`brand-${brand}`} className="text-sm text-gray-700 cursor-pointer">
-                {brand}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
-
-      <Separator />
-
-      {/* Thickness Filter */}
-      <FilterSection title="Thickness">
-        <div className="space-y-2">
-          {currentFilterOptions.thickness.map((thickness) => (
-            <div key={thickness} className="flex items-center space-x-2">
-              <Checkbox
-                id={`thickness-${thickness}`}
-                checked={selectedThickness.includes(thickness)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setSelectedThickness([...selectedThickness, thickness])
-                  } else {
-                    setSelectedThickness(selectedThickness.filter((t) => t !== thickness))
-                  }
-                }}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={`thickness-${thickness}`} className="text-sm text-gray-700 cursor-pointer">
-                {thickness}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
-
-      <Separator />
-
-      {/* Finish Filter */}
-      <FilterSection title="Finish">
-        <div className="space-y-2">
-          {currentFilterOptions.finish.map((finish) => (
-            <div key={finish} className="flex items-center space-x-2">
-              <Checkbox
-                id={`finish-${finish}`}
-                checked={selectedFinish.includes(finish)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setSelectedFinish([...selectedFinish, finish])
-                  } else {
-                    setSelectedFinish(selectedFinish.filter((f) => f !== finish))
-                  }
-                }}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={`finish-${finish}`} className="text-sm text-gray-700 cursor-pointer">
-                {finish}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
-
-      <Separator />
-
-      {/* Features Filter */}
-      <FilterSection title="Features">
-        <div className="space-y-2 max-h-48 overflow-y-auto">
-          {currentFilterOptions.features.map((feature) => (
-            <div key={feature} className="flex items-center space-x-2">
-              <Checkbox
-                id={`feature-${feature}`}
-                checked={selectedFeatures.includes(feature)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setSelectedFeatures([...selectedFeatures, feature])
-                  } else {
-                    setSelectedFeatures(selectedFeatures.filter((f) => f !== feature))
-                  }
-                }}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={`feature-${feature}`} className="text-sm text-gray-700 cursor-pointer">
-                {feature}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
-    </div>
-  )
-
-  const MobileFilterContent = () => (
-    <div className="space-y-4">
-      {/* Price Range */}
-      <FilterSection title="Price">
-        <div className="space-y-4">
-          <Slider value={tempPriceRange} onValueChange={setTempPriceRange} max={800} step={5} className="w-full" />
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <span>{formatPrice(tempPriceRange[0])}</span>
-            <span>{formatPrice(tempPriceRange[1])}</span>
-          </div>
-        </div>
-      </FilterSection>
-
-      <Separator />
-
-      {/* Brand Filter */}
-      <FilterSection title="Brand">
-        <div className="space-y-2 max-h-48 overflow-y-auto">
-          {currentFilterOptions.brands.map((brand) => (
-            <div key={brand} className="flex items-center space-x-2">
-              <Checkbox
-                id={`temp-brand-${brand}`}
-                checked={tempSelectedBrands.includes(brand)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setTempSelectedBrands([...tempSelectedBrands, brand])
-                  } else {
-                    setTempSelectedBrands(tempSelectedBrands.filter((b) => b !== brand))
-                  }
-                }}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={`temp-brand-${brand}`} className="text-sm text-gray-700 cursor-pointer">
-                {brand}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
-
-      <Separator />
-
-      {/* Thickness Filter */}
-      <FilterSection title="Thickness">
-        <div className="space-y-2">
-          {currentFilterOptions.thickness.map((thickness) => (
-            <div key={thickness} className="flex items-center space-x-2">
-              <Checkbox
-                id={`temp-thickness-${thickness}`}
-                checked={tempSelectedThickness.includes(thickness)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setTempSelectedThickness([...tempSelectedThickness, thickness])
-                  } else {
-                    setTempSelectedThickness(tempSelectedThickness.filter((t) => t !== thickness))
-                  }
-                }}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={`temp-thickness-${thickness}`} className="text-sm text-gray-700 cursor-pointer">
-                {thickness}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
-
-      <Separator />
-
-      {/* Finish Filter */}
-      <FilterSection title="Finish">
-        <div className="space-y-2">
-          {currentFilterOptions.finish.map((finish) => (
-            <div key={finish} className="flex items-center space-x-2">
-              <Checkbox
-                id={`temp-finish-${finish}`}
-                checked={tempSelectedFinish.includes(finish)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setTempSelectedFinish([...tempSelectedFinish, finish])
-                  } else {
-                    setTempSelectedFinish(tempSelectedFinish.filter((f) => f !== finish))
-                  }
-                }}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={`temp-finish-${finish}`} className="text-sm text-gray-700 cursor-pointer">
-                {finish}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
-
-      <Separator />
-
-      {/* Features Filter */}
-      <FilterSection title="Features">
-        <div className="space-y-2 max-h-48 overflow-y-auto">
-          {currentFilterOptions.features.map((feature) => (
-            <div key={feature} className="flex items-center space-x-2">
-              <Checkbox
-                id={`temp-feature-${feature}`}
-                checked={tempSelectedFeatures.includes(feature)}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setTempSelectedFeatures([...tempSelectedFeatures, feature])
-                  } else {
-                    setTempSelectedFeatures(tempSelectedFeatures.filter((f) => f !== feature))
-                  }
-                }}
-                className="h-4 w-4"
-              />
-              <Label htmlFor={`temp-feature-${feature}`} className="text-sm text-gray-700 cursor-pointer">
-                {feature}
-              </Label>
-            </div>
-          ))}
-        </div>
-      </FilterSection>
-    </div>
-  )
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16 sm:pt-20 lg:pt-24">
-      {/* Header with breadcrumb */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <Link href="/" className="hover:text-gray-900">
-              Home
-            </Link>
-            <span>/</span>
-            <Link href="/shop" className="hover:text-gray-900">
-              Shop
-            </Link>
-            <span>/</span>
-            <span className="text-gray-900 font-medium capitalize">{category.replace("-", " ")}</span>
-          </div>
-          <div className="mt-2">
-            <h1 className="text-2xl font-bold text-gray-900 capitalize">
-              {category.replace("-", " ")} - <span className="text-gray-600">{sortedProducts.length} items</span>
-            </h1>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white">
 
-      {/* Main Content */}
-      <div className="container mx-auto md:px-4 sm:px-6 lg:px-8 md:py-6 px-0 py-0">
-        <div className="flex gap-6">
-          {/* Desktop Sidebar Filters - Myntra Style */}
-          <div className="hidden lg:block w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg border border-gray-200 p-4 sticky top-24">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">FILTERS</h2>
-                {activeFiltersCount > 0 && (
-                  <Button
-                    variant="ghost"
-                    onClick={clearAllFilters}
-                    className="h-auto p-0 text-sm text-gray-500 hover:text-gray-700"
+      {/* Hero */}
+      <div className="pt-16">
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <div className="text-center">
+            <h1 className="text-6xl font-light tracking-tight text-gray-900 mb-6">Acrylic Sheets for {formatLabel(category)}</h1>
+            <p className="text-xl text-gray-600 font-light mb-12">Premium clarity. Exceptional strength.</p>
+
+            {/* Search */}
+            <div className="max-w-md mx-auto mb-8">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Search products"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-12 pr-4 py-4 text-lg rounded-full border-gray-200 bg-gray-50 focus:bg-white focus:border-gray-300"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    Clear ({activeFiltersCount})
-                  </Button>
+                    <X className="h-5 w-5" />
+                  </button>
                 )}
               </div>
-              <DesktopFilterContent />
-            </div>
-          </div>
-
-          {/* Main Product Area */}
-          <div className="flex-1">
-            {/* Sort Controls - Desktop */}
-            <div className="hidden sm:flex items-center justify-between mb-6 bg-white p-4 rounded-lg border border-gray-200">
-              <div className="text-sm text-gray-600">
-                Showing {sortedProducts.length} of {products.length} products
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm font-medium text-gray-700">Sort by:</span>
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger className="w-48 border-gray-300">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="featured">Popularity</SelectItem>
-                    <SelectItem value="price-low">Price: Low to High</SelectItem>
-                    <SelectItem value="price-high">Price: High to Low</SelectItem>
-                    <SelectItem value="rating">Customer Rating</SelectItem>
-                    <SelectItem value="newest">What's New</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
 
-            {/* Products Grid - Myntra Style */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-0 md:gap-4">
-              {sortedProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  isWishlisted={wishlist.includes(product.id)}
-                  onToggleWishlist={() => toggleWishlist(product.id)}
-                />
-              ))}
-            </div>
-
-            {sortedProducts.length === 0 && (
-              <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-                <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center">
-                  <Search className="h-8 w-8 text-gray-400" />
-                </div>
-                <h3 className="mb-2 text-lg font-medium text-gray-900">No products found</h3>
-                <p className="mb-4 text-gray-600">Try adjusting your search or filter criteria</p>
-                <Button onClick={clearAllFilters} variant="outline" className="rounded-lg bg-transparent">
-                  Clear All Filters
-                </Button>
-              </div>
-            )}
+            {/* Results count */}
+            <p className="text-gray-500">
+              {filteredProducts.length} {filteredProducts.length === 1 ? "product" : "products"}
+              {searchQuery && ` for "${searchQuery}"`}
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Mobile Bottom Bar - Myntra Style */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 z-40">
-        <div className="flex items-center space-x-4">
+      {/* Filters & Controls */}
+      <div className="mx-auto max-w-6xl md:px-6">
+        {/* Desktop Filters - Horizontal, Clean */}
+        <div className="hidden lg:block mb-12">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-6">
+              <span className="text-sm text-gray-700 font-medium">Filter by</span>
+
+              {/* Price Filter */}
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-gray-600">Price</span>
+                <div className="w-32">
+                  <Slider value={priceRange} onValueChange={setPriceRange} max={800} step={25} className="w-full" />
+                </div>
+                <span className="text-sm text-gray-600 min-w-[100px]">
+                  {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-6">
+              <span className="text-sm text-gray-700">Sort by</span>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-40 border-gray-200 rounded-full bg-transparent">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="featured">Featured</SelectItem>
+                  <SelectItem value="price-low">Price: Low to High</SelectItem>
+                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                  <SelectItem value="newest">Newest</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {/* Filter Chips */}
+          <div className="space-y-4">
+            {/* Thickness */}
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-gray-600 w-20">Thickness</span>
+              <div className="flex flex-wrap gap-2">
+                {filterOptions.thickness.map((thickness) => (
+                  <FilterChip
+                    key={thickness}
+                    label={thickness}
+                    isSelected={selectedThickness.includes(thickness)}
+                    onClick={() => {
+                      setSelectedThickness((prev) =>
+                        prev.includes(thickness) ? prev.filter((t) => t !== thickness) : [...prev, thickness],
+                      )
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Finish */}
+            <div className="flex items-center space-x-3">
+              <span className="text-sm text-gray-600 w-20">Finish</span>
+              <div className="flex flex-wrap gap-2">
+                {filterOptions.finish.map((finish) => (
+                  <FilterChip
+                    key={finish}
+                    label={finish}
+                    isSelected={selectedFinish.includes(finish)}
+                    onClick={() => {
+                      setSelectedFinish((prev) =>
+                        prev.includes(finish) ? prev.filter((f) => f !== finish) : [...prev, finish],
+                      )
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* Clear filters */}
+          {hasActiveFilters && (
+            <div className="mt-6">
+              <Button variant="ghost" onClick={clearAllFilters} className="text-sm text-gray-500 hover:text-gray-700">
+                Clear all filters
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Controls */}
+        <div className="lg:hidden flex items-center justify-between mb-8 px-6 md:px-0">
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="flex-1 border-gray-300">
-              <ArrowUpDown className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="SORT" />
+            <SelectTrigger className="w-32 border-gray-200 rounded-full bg-transparent">
+              <SelectValue placeholder="Sort" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="featured">Popularity</SelectItem>
+              <SelectItem value="featured">Featured</SelectItem>
               <SelectItem value="price-low">Price: Low to High</SelectItem>
               <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="rating">Customer Rating</SelectItem>
-              <SelectItem value="newest">What's New</SelectItem>
+              <SelectItem value="newest">Newest</SelectItem>
             </SelectContent>
           </Select>
 
           <Sheet open={isFilterOpen} onOpenChange={setIsFilterOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" className="flex-1 border-gray-300 bg-transparent">
-                <Filter className="h-4 w-4 mr-2" />
-                FILTER
-                {activeFiltersCount > 0 && (
-                  <Badge className="ml-2 h-5 w-5 rounded-full bg-red-500 p-0 text-xs text-white">
-                    {activeFiltersCount}
-                  </Badge>
+              <Button variant="outline" className="rounded-full border-gray-200 bg-transparent">
+                <SlidersHorizontal className="h-4 w-4 mr-2" />
+                Filters
+                {hasActiveFilters && (
+                  <Badge className="ml-2 h-5 w-5 rounded-full bg-gray-900 text-white p-0 text-xs">•</Badge>
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px] flex flex-col p-0">
-              <SheetHeader className="border-b border-gray-200 px-6 py-4">
+            <SheetContent side="right" className="w-[350px] p-0">
+              <div className="p-6 border-b">
                 <div className="flex items-center justify-between">
-                  <SheetTitle className="text-lg font-semibold">FILTERS</SheetTitle>
-                  <Button
-                    variant="ghost"
-                    onClick={resetTempFilters}
-                    className="h-auto p-0 text-sm text-gray-500 hover:text-gray-700"
-                  >
-                    Clear All
-                  </Button>
+                  <h2 className="text-xl font-semibold">Filters</h2>
+                  {hasActiveFilters && (
+                    <Button
+                      variant="ghost"
+                      onClick={clearAllFilters}
+                      className="text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      Clear all
+                    </Button>
+                  )}
                 </div>
-              </SheetHeader>
-
-              <div className="flex-1 overflow-y-auto px-6 py-4">
-                <MobileFilterContent />
               </div>
 
-              {hasFilterChanges && (
-                <div className="border-t border-gray-200 bg-white px-6 py-4">
-                  <div className="flex items-center space-x-3">
-                    <Button variant="outline" onClick={() => setIsFilterOpen(false)} className="flex-1">
-                      Cancel
-                    </Button>
-                    <Button onClick={applyFilters} className="flex-1 bg-red-500 text-white hover:bg-red-600">
-                      Apply
-                    </Button>
+              <div className="p-6 space-y-8">
+                {/* Price */}
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Price</h3>
+                  <Slider
+                    value={priceRange}
+                    onValueChange={setPriceRange}
+                    max={800}
+                    step={25}
+                    className="w-full mb-3"
+                  />
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>{formatPrice(priceRange[0])}</span>
+                    <span>{formatPrice(priceRange[1])}</span>
                   </div>
                 </div>
-              )}
+
+                {/* Thickness */}
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Thickness</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {filterOptions.thickness.map((thickness) => (
+                      <FilterChip
+                        key={thickness}
+                        label={thickness}
+                        isSelected={selectedThickness.includes(thickness)}
+                        onClick={() => {
+                          setSelectedThickness((prev) =>
+                            prev.includes(thickness) ? prev.filter((t) => t !== thickness) : [...prev, thickness],
+                          )
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Finish */}
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Finish</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {filterOptions.finish.map((finish) => (
+                      <FilterChip
+                        key={finish}
+                        label={finish}
+                        isSelected={selectedFinish.includes(finish)}
+                        onClick={() => {
+                          setSelectedFinish((prev) =>
+                            prev.includes(finish) ? prev.filter((f) => f !== finish) : [...prev, finish],
+                          )
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Brand */}
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Brand</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {filterOptions.brands.map((brand) => (
+                      <FilterChip
+                        key={brand}
+                        label={brand}
+                        isSelected={selectedBrands.includes(brand)}
+                        onClick={() => {
+                          setSelectedBrands((prev) =>
+                            prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand],
+                          )
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
+
+        {/* Active Filters Display */}
+        {hasActiveFilters && (
+          <div className="mb-8">
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-sm text-gray-600">Active filters:</span>
+              {selectedThickness.map((thickness) => (
+                <Badge key={thickness} variant="secondary" className="bg-gray-100 text-gray-700">
+                  {thickness}
+                  <button
+                    onClick={() => setSelectedThickness((prev) => prev.filter((t) => t !== thickness))}
+                    className="ml-2 hover:text-gray-900"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+              {selectedFinish.map((finish) => (
+                <Badge key={finish} variant="secondary" className="bg-gray-100 text-gray-700">
+                  {finish}
+                  <button
+                    onClick={() => setSelectedFinish((prev) => prev.filter((f) => f !== finish))}
+                    className="ml-2 hover:text-gray-900"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+              {selectedBrands.map((brand) => (
+                <Badge key={brand} variant="secondary" className="bg-gray-100 text-gray-700">
+                  {brand}
+                  <button
+                    onClick={() => setSelectedBrands((prev) => prev.filter((b) => b !== brand))}
+                    className="ml-2 hover:text-gray-900"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+              {(priceRange[0] > 0 || priceRange[1] < 800) && (
+                <Badge variant="secondary" className="bg-gray-100 text-gray-700">
+                  {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
+                  <button onClick={() => setPriceRange([0, 800])} className="ml-2 hover:text-gray-900">
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Products Grid */}
+        {filteredProducts.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-8 mb-20 ">
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isWishlisted={wishlist.includes(product.id)}
+                onToggleWishlist={() => toggleWishlist(product.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          /* Empty State */
+          <div className="text-center py-20">
+            <div className="mb-6">
+              <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                <Search className="w-6 h-6 text-gray-400" />
+              </div>
+              <h3 className="text-2xl font-light text-gray-900 mb-2">
+                {searchQuery ? `No results for "${searchQuery}"` : "No products match your filters"}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {searchQuery ? "Try a different search term" : "Try adjusting your filters"}
+              </p>
+              <Button
+                onClick={clearAllFilters}
+                variant="outline"
+                className="rounded-full border-gray-200 bg-transparent"
+              >
+                {searchQuery ? "Clear search and filters" : "Clear all filters"}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
 }
-

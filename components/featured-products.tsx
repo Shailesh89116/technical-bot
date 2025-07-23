@@ -35,17 +35,12 @@ export function FeaturedProducts() {
             </p>
             <div className="flex items-center gap-6 text-lg text-blue-500">
               <Link
-                href="/shop/clear"
+                href="/shop/heatcut"
                 className="flex items-center hover:underline"
               >
                 Shop Heat Cut Series <ChevronRight className="ml-1 h-4 w-4" />
               </Link>
-              <Link
-                href="/specs/clear"
-                className="flex items-center hover:underline"
-              >
-                View specs <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
+             
             </div>
           </div>
           <div className="order-1 md:order-2">
@@ -77,31 +72,23 @@ export function FeaturedProducts() {
             </div>
             <div className="order-2">
               <h3 className="mb-2 text-2xl md:text-3xl font-semibold">
-                Frosted Acrylic
+                Nature Series
               </h3>
               <p className="mb-4 text-xl text-gray-500">
-                Elegant diffusion. Sophisticated finish.
+                Close to Nature
               </p>
               <p className="mb-6 text-lg leading-relaxed text-gray-600">
-                Our frosted acrylic creates a premium, ethereal glow while
-                maintaining structural integrity. Perfect for lighting and
-                architectural applications.
+                Distinctive with a beautiful and easy on the eye appearance, but at an affordable price. Suitable for areas that need natural light, filtering excess light and block harmfull radiation.
               </p>
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 text-base md:text-lg text-blue-500">
                 <Link
-                  href="/shop/frosted"
+                  href="/shop/nature"
                   className="flex items-center hover:underline transition-all duration-300 hover:text-blue-600 group"
                 >
-                  Shop Frosted{" "}
+                  Shop Nature Series{" "}
                   <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </Link>
-                <Link
-                  href="/specs/frosted"
-                  className="flex items-center hover:underline transition-all duration-300 hover:text-blue-600 group"
-                >
-                  View specs{" "}
-                  <ChevronRight className="ml-1 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
+     
               </div>
             </div>
           </div>
@@ -120,17 +107,12 @@ export function FeaturedProducts() {
             </p>
             <div className="flex items-center gap-6 text-lg text-blue-500">
               <Link
-                href="/shop/black"
+                href="/shop/superior"
                 className="flex items-center hover:underline"
               >
-                Shop Black <ChevronRight className="ml-1 h-4 w-4" />
+                Shop Superior Series <ChevronRight className="ml-1 h-4 w-4" />
               </Link>
-              <Link
-                href="/specs/black"
-                className="flex items-center hover:underline"
-              >
-                View specs <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
+       
             </div>
           </div>
           <div className="order-1 md:order-2">

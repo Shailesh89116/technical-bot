@@ -2,7 +2,6 @@ import CategoryPage from "@/components/shop/all-product";
 import { Suspense } from "react";
 
 const ShopPage = async () => {
-
   return (
     <Suspense
       fallback={
@@ -14,10 +13,9 @@ const ShopPage = async () => {
         </div>
       }
     >
-      <CategoryPage/>
+      <CategoryPage />
     </Suspense>
   );
 };
 
 export default ShopPage;
- 

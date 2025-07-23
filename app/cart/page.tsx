@@ -39,7 +39,7 @@ export default function CartPage() {
   const tax = subtotal * taxRate
   const total = subtotal + shipping + tax
 
-  const updateQuantity = (id, newQuantity) => {
+  const updateQuantity = (id:number, newQuantity:number) => {
     if (newQuantity < 1) return
 
     setCartItems(cartItems.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item)))
@@ -94,7 +94,7 @@ export default function CartPage() {
                               <h3 className="text-base font-medium text-gray-900">{item.name}</h3>
                               <p className="mt-1 text-sm text-gray-500">{item.specs}</p>
                             </div>
-                            <p className="text-base font-medium text-gray-900">${item.price.toFixed(2)}</p>
+                            <p className="text-base font-medium text-gray-900">₹{item.price.toFixed(2)}</p>
                           </div>
 
                           {/* Quantity Controls */}
@@ -169,32 +169,28 @@ export default function CartPage() {
                   <div className="space-y-4">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Subtotal</span>
-                      <span className="font-medium">${subtotal.toFixed(2)}</span>
+                      <span className="font-medium">₹{subtotal.toFixed(2)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Shipping</span>
-                      <span className="font-medium">{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
+                      <span className="font-medium">{shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Tax ({(taxRate * 100).toFixed(0)}%)</span>
-                      <span className="font-medium">${tax.toFixed(2)}</span>
+                      <span className="font-medium">₹{tax.toFixed(2)}</span>
                     </div>
 
                     <Separator />
 
                     <div className="flex justify-between text-lg font-semibold">
                       <span>Total</span>
-                      <span>${total.toFixed(2)}</span>
+                      <span>₹{total.toFixed(2)}</span>
                     </div>
                   </div>
 
                   <Button asChild className="mt-6 w-full rounded-full bg-black py-6 text-base hover:bg-gray-800">
                     <Link href="/checkout">Proceed to Checkout</Link>
                   </Button>
-
-                  {subtotal > 200 && (
-                    <p className="mt-4 text-center text-sm text-gray-500">Free shipping on orders over $200</p>
-                  )}
                 </div>
 
                 <div className="rounded-xl border border-gray-200 bg-white p-6">
