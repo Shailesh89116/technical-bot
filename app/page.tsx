@@ -4,7 +4,7 @@ import { FeaturedProducts } from "@/components/featured-products";
 import { HowItWorks } from "@/components/how-it-works";
 import { PoweredByACL } from "@/components/powered-by-acl";
 import { ProductCategories } from "@/components/products-category";
-import { VideoShowcase } from "@/components/video-showcase";
+// import { VideoShowcase } from "@/components/video-showcase";
 
 export default function Home() {
   return (
@@ -14,7 +14,7 @@ export default function Home() {
       <ProductCategories />
       <FeaturedProducts />
       <BenefitsSection />
-      <VideoShowcase/>
+      {/* <VideoShowcase/> */}
       <HowItWorks />
     </div>
   );
