@@ -4,31 +4,286 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  username  String   @unique
-  password  String
+model User {
+  id                String            @id @default(uuid())
+  name              String
+  email             String            @unique
+  password          String?
+  phone             String?           @unique
+  isPhoneVerified   Boolean           @default(false)
+  isEmailVerified   Boolean           @default(false)
+  profileImage      String?
+  role              UserRole          @default(CUSTOMER)
+  status            UserStatus        @default(ACTIVE)
+  addresses         Address[]
+  shippingAddresses ShippingAddress[]
+  orders            Order[]
+  cartItems         CartItem[]
+  wishlists         Wishlist[]
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+}
+
+model Address {
+  id        String      @id @default(uuid())
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String
+  type      AddressType @default(HOME)
+  fullName  String
+  phone     String
+  pincode   String
+  state     String
+  city      String
+  street    String
+  landmark  String?
+  isDefault Boolean     @default(false)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+enum AddressType {
+  HOME
+  WORK
+  OTHER
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+  SELLER
+  DELIVERY_AGENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BANNED
+}
+
+model Category {
+  id                String             @id @default(uuid())
+  name              String
+  slug              String             @unique
+  subcategories     SubCategory[]
+  products          Product[]
+  categoryDiscounts CategoryDiscount[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model SubCategory {
+  id                   String                @id @default(uuid())
+  name                 String
+  slug                 String                @unique
+  category             Category              @relation(fields: [categoryId], references: [id])
+  categoryId           String
+  products             Product[]
+  subCategoryDiscounts SubCategoryDiscount[]
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+}
+
+model Product {
+  id               String            @id @default(uuid())
+  name             String
+  image            String?
+  description      String?
+  category         Category          @relation(fields: [categoryId], references: [id])
+  categoryId       String
+  subcategory      SubCategory       @relation(fields: [subcategoryId], references: [id])
+  subcategoryId    String
+  grade            String?
+  span             String?
+  heatcut          String?
+  colors           String[]
+  sizes            String[]
+  thicknessMin     Float?
+  thicknessMax     Float?
+  thickness        Float?
+  priceEntries     Price[]
+  inventories      Inventory[]
+  productDiscounts ProductDiscount[]
+  orderItem        OrderItem[]
+  cartItem         CartItem[]
+  wishlist         Wishlist[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Price {
+  id        String   @id @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  size      String
+  price     Float
+  currency  String   @default("INR")
+  validFrom DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+model Inventory {
+  id           String   @id @default(uuid())
+  product      Product  @relation(fields: [productId], references: [id])
+  productId    String
+  size         String
+  warehouse    String?
+  quantity     Int      @default(0)
+  reorderLevel Int      @default(0)
+  updatedAt    DateTime @updatedAt
+}
+
+model DiscountRule {
+  id                   String                @id @default(uuid())
+  name                 String
+  description          String?
+  productDiscounts     ProductDiscount[]
+  categoryDiscounts    CategoryDiscount[]
+  subCategoryDiscounts SubCategoryDiscount[]
+  orders               Order[]
+  minQuantity          Int?
+  discountPct          Float
+  startDate            DateTime
+  endDate              DateTime?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+}
+
+model TaxGroup {
+  id          String   @id @default(uuid())
+  region      String
+  gstRatePct  Float
+  cessRatePct Float?
+  order       Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ProductDiscount {
+  id             String       @id @default(uuid())
+  product        Product      @relation(fields: [productId], references: [id])
+  productId      String
+  discountRule   DiscountRule @relation(fields: [discountRuleId], references: [id])
+  discountRuleId String
+}
+
+model CategoryDiscount {
+  id             String       @id @default(uuid())
+  category       Category     @relation(fields: [categoryId], references: [id])
+  categoryId     String
+  discountRule   DiscountRule @relation(fields: [discountRuleId], references: [id])
+  discountRuleId String
+}
+
+model SubCategoryDiscount {
+  id             String       @id @default(uuid())
+  subCategory    SubCategory  @relation(fields: [subCategoryId], references: [id])
+  subCategoryId  String
+  discountRule   DiscountRule @relation(fields: [discountRuleId], references: [id])
+  discountRuleId String
+}
+
+model Order {
+  id                String           @id @default(uuid())
+  user              User             @relation(fields: [userId], references: [id])
+  userId            String
+  orderItems        OrderItem[]
+  shippingAddress   ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  shippingAddressId String?
+  paymentStatus  PaymentStatus @default(PENDING)
+  paymentMethod  PaymentMethod @default(COD)
+  isPaid         Boolean       @default(false)
+  paidAt         DateTime?
+  discount       DiscountRule? @relation(fields: [discountId], references: [id])
+  discountId     String?
+  taxGroup       TaxGroup?     @relation(fields: [taxGroupId], references: [id])
+  taxGroupId     String?
+  totalPrice     Decimal       @db.Decimal(10, 2)
+  subtotalPrice  Decimal       @db.Decimal(10, 2)
+  taxAmount      Decimal       @db.Decimal(10, 2)
+  discountAmount Decimal       @db.Decimal(10, 2)
+  shippingCost   Decimal       @db.Decimal(10, 2)
+  grandTotal     Decimal       @db.Decimal(10, 2)
+  orderStatus    OrderStatus   @default(PENDING)
+  shippedAt      DateTime?
+  deliveredAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
+
+model ShippingAddress {
+  id         String   @id @default(uuid())
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+  order      Order[]
+  fullName   String
+  address    String
+  city       String
+  state      String
+  postalCode String
+  country    String
+  phone      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
+  unitPrice Decimal  @db.Decimal(10, 2)
+  size      String?
+  total     Decimal  @db.Decimal(10, 2)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Customer {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  companyName String
-
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  RETURNED
 }
 
-
-model Category{
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  }
-
-model Product{
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 }
 
+enum PaymentMethod {
+  COD
+  CARD
+  UPI
+  NETBANKING
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int
+  size      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Wishlist {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String
+  createdAt DateTime @default(now())
+}

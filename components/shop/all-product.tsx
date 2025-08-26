@@ -3,7 +3,6 @@
 "use client"
 import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -147,34 +146,6 @@ export default function CategoryPage() {
           <div className="text-center">
             <h1 className="text-6xl font-light tracking-tight text-gray-900 mb-6">Acrylic Sheets</h1>
             <p className="text-xl text-gray-600 font-light mb-12">Premium clarity. Exceptional strength.</p>
-
-            {/* Search */}
-            <div className="max-w-md mx-auto mb-8">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Search products"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 pr-4 py-4 text-lg rounded-full border-gray-200 bg-gray-50 focus:bg-white focus:border-gray-300"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    <X className="h-5 w-5" />
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Results count */}
-            <p className="text-gray-500">
-              {filteredProducts.length} {filteredProducts.length === 1 ? "product" : "products"}
-              {searchQuery && ` for "${searchQuery}"`}
-            </p>
           </div>
         </div>
       </div>

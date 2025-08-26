@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
-import { ShoppingBag, X, User } from "lucide-react"
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { ShoppingBag, X, User } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,60 +15,65 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
-import Image from "next/image"
+} from "@/components/ui/navigation-menu";
+import Image from "next/image";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function Navigation() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-  const pathname = usePathname()
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   // Check if current page is homepage
-  const isHomePage = pathname === "/"
+  const isHomePage = pathname === "/";
 
   // Determine initial header style based on page
-  const [isDarkHeader, setIsDarkHeader] = useState(isHomePage)
+  const [isDarkHeader, setIsDarkHeader] = useState(isHomePage);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrolled = window.scrollY > 10
-      setIsScrolled(scrolled)
+      const scrolled = window.scrollY > 10;
+      setIsScrolled(scrolled);
 
       // When scrolled, always use dark header
       if (scrolled) {
-        setIsDarkHeader(true)
+        setIsDarkHeader(true);
       } else {
         // Reset to initial state based on page
-        setIsDarkHeader(isHomePage)
+        setIsDarkHeader(isHomePage);
       }
-    }
+    };
 
-    window.addEventListener("scroll", handleScroll, { passive: true })
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [isHomePage])
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isHomePage]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (menuOpen) {
-      document.body.style.overflow = "hidden"
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "unset"
+      document.body.style.overflow = "unset";
     }
 
     // Cleanup function to reset overflow when component unmounts
     return () => {
-      document.body.style.overflow = "unset"
-    }
-  }, [menuOpen])
+      document.body.style.overflow = "unset";
+    };
+  }, [menuOpen]);
 
   const handleMenuToggle = () => {
-    setMenuOpen(!menuOpen)
-  }
+    setMenuOpen(!menuOpen);
+  };
 
   const handleMenuClose = () => {
-    setMenuOpen(false)
-  }
+    setMenuOpen(false);
+  };
 
   return (
     <>
@@ -77,14 +82,25 @@ export function Navigation() {
           isScrolled
             ? "bg-black/80 backdrop-blur-md"
             : isHomePage
-              ? "bg-transparent"
-              : "bg-white border-b border-gray-200"
+            ? "bg-transparent"
+            : "bg-white border-b border-gray-200"
         }`}
       >
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-6 md:gap-10">
-            <Link href="/" className={`text-xl font-medium ${isDarkHeader ? "text-white" : "text-gray-900"}`}>
-             <Image src="/shinkolite-logo.png" alt="Shinkolite" height={100} width={200} className="h-20 w-auto"/>
+            <Link
+              href="/"
+              className={`text-xl font-medium ${
+                isDarkHeader ? "text-white" : "text-gray-900"
+              }`}
+            >
+              <Image
+                src="/shinkolite-logo.png"
+                alt="Shinkolite"
+                height={100}
+                width={200}
+                className="h-20 w-auto"
+              />
             </Link>
 
             {/* Desktop Navigation with Shop Dropdown */}
@@ -94,33 +110,36 @@ export function Navigation() {
                   <NavigationMenuTrigger
                     className={`${
                       isDarkHeader
-                        ? "bg-transparent text-white/80  data-[state=open]:bg-white/10 data-[state=open]:text-white"
-                        : "bg-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-100 data-[state=open]:bg-white/10 data-[state=open]:text-white"
+                        ? "bg-transparent text-white/80 hover:text-gray-900 hover:bg-gray-100"
+                        : "bg-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-100 "
                     }`}
                   >
                     Shop
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
-                      <li className="row-span-3">
-                        <NavigationMenuLink asChild>
-                          <Link
-                            href="/shop/building-materials"
-                            className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-gray-900 to-black p-6 no-underline outline-none focus:shadow-md"
-                          >
-                            <div className="mt-4 mb-2 text-lg font-medium text-white">Acrylic for Building Material</div>
-                            <p className="text-sm leading-tight text-white/90">
-                              High-clarity acrylic with 92% light transmission, UV-stabilized for outdoor use
-                            </p>
-                          </Link>
-                        </NavigationMenuLink>
+                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px]">
+                      <li className="">
+                        <Link
+                          href="/shop/building-materials"
+                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                        >
+                          <div className="text-sm font-medium leading-none">
+                            Acrylic for Building Material
+                          </div>
+                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                            High-clarity acrylic with 92% light transmission,
+                            UV-stabilized for outdoor use
+                          </p>
+                        </Link>
                       </li>
                       <li>
                         <Link
                           href="/shop/sanitary"
                           className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
-                          <div className="text-sm font-medium leading-none">Acrylic for Sanitary</div>
+                          <div className="text-sm font-medium leading-none">
+                            Acrylic for Sanitary
+                          </div>
                           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
                             Perfect for crafts and small displays
                           </p>
@@ -131,9 +150,11 @@ export function Navigation() {
                           href="/shop/interior"
                           className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
-                          <div className="text-sm font-medium leading-none">Acrylic for Interior</div>
+                          <div className="text-sm font-medium leading-none">
+                            Acrylic for Interior
+                          </div>
                           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Ideal for signage and displays
+                            For heavy-duty applications and furniture
                           </p>
                         </Link>
                       </li>
@@ -142,16 +163,18 @@ export function Navigation() {
                           href="/shop/advertise"
                           className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                         >
-                          <div className="text-sm font-medium leading-none">Acrylic for Advertise</div>
+                          <div className="text-sm font-medium leading-none">
+                            Acrylic for Advertise
+                          </div>
                           <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            For heavy-duty applications and furniture
+                            Ideal for signage and displays
                           </p>
                         </Link>
                       </li>
                     </ul>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-         
+
                 <NavigationMenuItem>
                   <Link href="/contact" passHref>
                     <NavigationMenuLink
@@ -193,36 +216,68 @@ export function Navigation() {
             ) : (
               <>
                 <Link href="/account">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Account"
-                    className={isDarkHeader ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"}
-                  >
-                    <User className="h-5 w-5" />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Account"
+                        className={
+                          isDarkHeader
+                            ? "text-white hover:bg-white/10"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }
+                      >
+                        <User className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>User Account</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </Link>
                 <Link href="/cart">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label="Cart"
-                    className={`relative ${isDarkHeader ? "text-white hover:bg-white/10" : "text-gray-700 hover:bg-gray-100"}`}
-                  >
-                    <ShoppingBag className="h-5 w-5" />
-                    <span
-                      className={`absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-medium ${
-                        isDarkHeader ? "bg-white text-black" : "bg-black text-white"
-                      }`}
-                    >
-                      0
-                    </span>
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Cart"
+                        className={`relative ${
+                          isDarkHeader
+                            ? "text-white hover:bg-white/10"
+                            : "text-gray-700 hover:bg-gray-100"
+                        }`}
+                      >
+                        <ShoppingBag className="h-5 w-5" />
+                        <span
+                          className={`absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-medium ${
+                            isDarkHeader
+                              ? "bg-white text-black"
+                              : "bg-black text-white"
+                          }`}
+                        >
+                          0
+                        </span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Cart</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </Link>
 
                 {/* Mobile Menu Button */}
-                <Button variant="ghost" className="md:hidden" onClick={handleMenuToggle}>
-                  <span className={isDarkHeader ? "text-white" : "text-gray-700"}>Menu</span>
+                <Button
+                  variant="ghost"
+                  className="md:hidden"
+                  onClick={handleMenuToggle}
+                >
+                  <span
+                    className={isDarkHeader ? "text-white" : "text-gray-700"}
+                  >
+                    Menu
+                  </span>
                 </Button>
               </>
             )}
@@ -235,7 +290,13 @@ export function Navigation() {
         <div className="fixed inset-0 z-[100] flex flex-col bg-black">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <Link href="/">
-             <Image src="/shinkolite-logo.png" alt="Shinkolite" height={100} width={200} className="h-20 w-auto"/>
+              <Image
+                src="/shinkolite-logo.png"
+                alt="Shinkolite"
+                height={100}
+                width={200}
+                className="h-20 w-auto"
+              />
             </Link>
             <Button
               variant="ghost"
@@ -255,7 +316,7 @@ export function Navigation() {
             >
               Shop
             </Link>
-          
+
             <Link
               href="/support"
               className="text-2xl font-medium text-white hover:text-gray-300 transition-colors"
@@ -267,5 +328,5 @@ export function Navigation() {
         </div>
       )}
     </>
-  )
+  );
 }
