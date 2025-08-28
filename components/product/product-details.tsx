@@ -327,14 +327,14 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
                   <Button
                     size="lg"
                     className="h-14 rounded-xl bg-[#02a89e] hover:bg-[#285754] text-base font-semibold shadow-lg hover:shadow-xl transition-all"
-                    onClick={() => router.push('/checkout')}
+                    onClick={() => router.push('/cart')}
                   >
                     Add to Cart
                   </Button>
                   <Button
                     size="lg"
                     className="h-14 rounded-xl bg-gray-900 hover:bg-gray-800 text-base font-semibold shadow-lg hover:shadow-xl transition-all"
-                    onClick={() => router.push('/checkout')}
+                    onClick={() => router.push('/cart')}
                   >
                     Buy Now
                   </Button>
