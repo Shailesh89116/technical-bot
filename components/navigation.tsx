@@ -318,7 +318,7 @@ export function Navigation() {
             </Link>
 
             <Link
-              href="/support"
+              href="/contact"
               className="text-2xl font-medium text-white hover:text-gray-300 transition-colors"
               onClick={handleMenuClose}
             >
