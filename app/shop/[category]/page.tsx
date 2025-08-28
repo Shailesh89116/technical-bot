@@ -1,4 +1,5 @@
 import CategoryPage from "@/components/shop/category-grid";
+import { products } from "@/dummy-data/products";
 import { Suspense } from "react";
 
 const ShopPage = async ({
@@ -7,6 +8,9 @@ const ShopPage = async ({
   params: Promise<{ category: string }>;
 }) => {
   const category = (await params).category;
+
+  const productList = products.filter(
+    (product) => category.toLowerCase() === product.mainCategory?.toLowerCase())
 
   return (
     <Suspense
@@ -19,7 +23,7 @@ const ShopPage = async ({
         </div>
       }
     >
-      <CategoryPage category={category} />
+      <CategoryPage products={productList} />
     </Suspense>
   );
 };

@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import Image from "next/image"
-import { Mail, MapPin, MessageSquare, Phone } from "lucide-react"
+import { Mail, MapPin, Phone } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -48,7 +48,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="mb-1 text-base font-medium md:text-lg">Phone</h3>
-                    <p className="text-sm text-gray-600 md:text-base">+1 (800) 123-4567</p>
+                    <p className="text-sm text-gray-600 md:text-base">+91 983-399-5543</p>
                     <p className="text-xs text-gray-600 md:text-sm">Monday - Friday, 9am - 5pm IST</p>
                   </div>
                 </div>
@@ -74,18 +74,6 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 md:gap-4">
-                  <div className="rounded-full bg-gray-100 p-2 md:p-3">
-                    <MessageSquare className="h-4 w-4 md:h-5 md:w-5" />
-                  </div>
-                  <div>
-                    <h3 className="mb-1 text-base font-medium md:text-lg">Live Chat</h3>
-                    <p className="text-sm text-gray-600 md:text-base">Chat with our AI assistant for instant quotes</p>
-                    <Button variant="link" className="h-auto p-0 text-sm text-black md:text-base">
-                      Start Chat
-                    </Button>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -124,7 +112,7 @@ export default function ContactPage() {
                   </label>
                   <Textarea id="message" placeholder="Your message" rows={5} className="text-sm md:text-base" />
                 </div>
-                <Button className="w-full rounded-full text-sm md:text-base">Send Message</Button>
+                <Button className="w-full rounded-full text-sm md:text-base bg-[#1f504b]">Send Message</Button>
               </form>
             </div>
           </div>
@@ -140,14 +128,14 @@ export default function ContactPage() {
           <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
             <div className="aspect-video w-full">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.0!2d-74.0!3d40.75!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDDCsDQ1JzAwLjAiTiA3NMKwMDAnMDAuMCJX!5e0!3m2!1sen!2sus!4v1234567890"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d332.1316932081753!2d72.85473803807542!3d19.231259856911866!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b19de5301b57%3A0xb01d197c732fceba!2sAmbica%20Foundation!5e1!3m2!1sen!2sin!4v1756352862292!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="NatureLight Office Location"
+                title="Shinkolite Showroom"
                 className="h-full w-full"
               />
             </div>

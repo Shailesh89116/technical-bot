@@ -1,84 +1,59 @@
-// Shinkolite Acrylic Sheet Product Types
-
-export interface ProductSize {
-  id: string;
-  name: string;
-  price: number;
-  inStock: boolean;
-  stockCount: number;
+// Base for reusable stuff
+interface SizeOption {
+  id: string
+  name: string
+  price: number
+  inStock: boolean
+  stockCount: number
 }
 
-export interface ProductSpecifications {
-  thickness: string;
-  span: string;
-  lightTransmission: string;
-  heatcut: string;
+interface VariantOption {
+  colorName: string
+  code: string
+  image?: string
 }
 
-export type ProductCategory = "superior" | "prime" | "heatcut" | "nature";
-
-export interface ShinkoliteProduct {
-  id: string;
-  name: string;
-  code: string;
-  category: ProductCategory;
-  heatcut: string;
-  inStock: boolean;
-  price: number; // starting price
-  description: string;
-  specifications: ProductSpecifications;
-  features: string[];
-  application: string;
-  images: string[];
-  sizes: ProductSize[];
+interface CustomSize {
+  width: string
+  length: string
 }
 
-export type ShinkoliteProductArray = ShinkoliteProduct[];
-
-// Utility types for specific product properties
-export type ProductId = ShinkoliteProduct["id"];
-export type ProductCode = ShinkoliteProduct["code"];
-export type ProductName = ShinkoliteProduct["name"];
-
-// Filter types for product filtering
-export interface ProductFilters {
-  category?: ProductCategory;
-  inStock?: boolean;
-  minPrice?: number;
-  maxPrice?: number;
-  lightTransmissionRange?: {
-    min: number;
-    max: number;
-  };
-  heatcutRange?: {
-    min: number;
-    max: number;
-  };
+interface Attributes {
+  heatcut?: string
+  uvCut?: string
+  lightTransmission?: string
+  heatReflection?: string
+  [key: string]: string | undefined
 }
 
-// API response types
-export interface ProductResponse {
-  success: boolean;
-  data: ShinkoliteProduct[];
-  total: number;
-  message?: string;
-}
-
-export interface SingleProductResponse {
-  success: boolean;
-  data: ShinkoliteProduct | null;
-  message?: string;
-}
-
-// Cart/Order related types
-export interface CartItem {
-  productId: string;
-  sizeId: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-}
-
-export interface ProductWithSelectedSize extends ShinkoliteProduct {
-  selectedSize: ProductSize;
+// Main product interface
+export interface Product {
+  id: string
+  name: string
+  code?: string
+  category: 
+    | "prime" 
+    | "heatcut" 
+    | "superior" 
+    | "nature" 
+    | "shade" 
+    | "grand" 
+    | "sanitary" 
+    | "advertising"
+    | "interior"
+    mainCategory?: "building-materials" | "interior" | "advertising" | "sanitary" // for broader grouping if needed
+  price: number
+  inStock: boolean
+  description: string
+  thickness?: string
+  thicknessRange?: string
+  span?: string
+  sizes?: SizeOption[]
+  standardSizes?: string[]
+  maxCustomSize?: CustomSize
+  features: string[]
+  application: string
+  images: string[]
+  attributes: Attributes
+  variants?: VariantOption[] // only used in Advertising
 }

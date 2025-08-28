@@ -21,7 +21,7 @@ export default function CheckoutPage() {
   const { toast } = useToast()
   const [step, setStep] = useState(1)
   const [shippingMethod, setShippingMethod] = useState("standard")
-  const [paymentMethod, setPaymentMethod] = useState("credit-card")
+  const [paymentMethod, setPaymentMethod] = useState("upi")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formErrors, setFormErrors] = useState<Record<string, string | null>>({})
 
@@ -34,40 +34,42 @@ export default function CheckoutPage() {
     address: "",
     address2: "",
     city: "",
-    state: "NY",
-    zip: "",
-    country: "US",
+    state: "Maharashtra",
+    pincode: "",
+    country: "India",
     notes: "",
     cardNumber: "",
     cardExpiry: "",
     cardCvc: "",
     nameOnCard: "",
+    upiId: "",
+    gstNumber: "",
   })
 
-  // Cart items
+  // Cart items - using real product data
   const cartItems = [
     {
-      id: 1,
-      name: "Clear 5mm Acrylic Sheet",
-      image: "/img-2.png",
-      specs: "5mm thickness, 4'×8'",
-      price: 89.99,
+      id: "grand-001",
+      name: "Grand Series Clear Acrylic Sheet",
+      image: "/img-1.png",
+      specs: "5mm thickness, 1230×2450mm, UV Cut 99%",
+      price: 4200,
       quantity: 2,
     },
     {
-      id: 5,
-      name: "Frosted 3mm Acrylic Sheet",
-      image: "/img-1.png",
-      specs: "3mm thickness, 4'×8'",
-      price: 69.99,
+      id: "prime-001",
+      name: "Prime Series Frosted Acrylic Sheet",
+      image: "/img-2.png",
+      specs: "3mm thickness, 1230×2450mm, Heat Cut 85%",
+      price: 2800,
       quantity: 1,
     },
   ]
 
   const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
-  const shipping = shippingMethod === "express" ? 35 : subtotal > 200 ? 0 : 25
-  const tax = subtotal * 0.07
-  const total = subtotal + shipping + tax
+  const shipping = shippingMethod === "express" ? 500 : subtotal > 10000 ? 0 : 350
+  const gst = subtotal * 0.18 // 18% GST
+  const total = subtotal + shipping + gst
 
   const steps = [
     { number: 1, title: "Shipping", icon: Package },
@@ -76,7 +78,7 @@ export default function CheckoutPage() {
     { number: 4, title: "Review", icon: CheckCircle2 },
   ]
 
-  const handleInputChange = (e:any) => {
+  const handleInputChange = (e: any) => {
     const { id, value } = e.target
     setFormData({ ...formData, [id]: value })
     if (formErrors[id]) {
@@ -110,18 +112,38 @@ export default function CheckoutPage() {
   const validateShippingInfo = () => {
     const errors: Record<string, string> = {}
 
+    if (!formData.firstName.trim()) {
+      errors.firstName = "First name is required"
+    }
 
+    if (!formData.lastName.trim()) {
+      errors.lastName = "Last name is required"
+    }
 
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+    if (!formData.email.trim()) {
+      errors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       errors.email = "Please enter a valid email address"
     }
 
-    if (formData.phone && !/^\d{10}$/.test(formData.phone.replace(/\D/g, ""))) {
-      errors.phone = "Please enter a valid 10-digit phone number"
+    if (!formData.phone.trim()) {
+      errors.phone = "Phone number is required"
+    } else if (!/^[6-9]\d{9}$/.test(formData.phone.replace(/\D/g, ""))) {
+      errors.phone = "Please enter a valid 10-digit Indian mobile number"
     }
 
-    if (formData.zip && !/^\d{5}(-\d{4})?$/.test(formData.zip)) {
-      errors.zip = "Please enter a valid ZIP code"
+    if (!formData.address.trim()) {
+      errors.address = "Address is required"
+    }
+
+    if (!formData.city.trim()) {
+      errors.city = "City is required"
+    }
+
+    if (!formData.pincode.trim()) {
+      errors.pincode = "PIN code is required"
+    } else if (!/^\d{6}$/.test(formData.pincode)) {
+      errors.pincode = "Please enter a valid 6-digit PIN code"
     }
 
     return errors
@@ -130,26 +152,34 @@ export default function CheckoutPage() {
   const validatePaymentInfo = () => {
     const errors: Record<string, string> = {}
 
-    if (!formData.cardNumber) {
-      errors.cardNumber = "Card number is required"
-    } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ""))) {
-      errors.cardNumber = "Please enter a valid 16-digit card number"
-    }
+    if (paymentMethod === "credit-card") {
+      if (!formData.cardNumber) {
+        errors.cardNumber = "Card number is required"
+      } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ""))) {
+        errors.cardNumber = "Please enter a valid 16-digit card number"
+      }
 
-    if (!formData.cardExpiry) {
-      errors.cardExpiry = "Expiry date is required"
-    } else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(formData.cardExpiry)) {
-      errors.cardExpiry = "Please use MM/YY format"
-    }
+      if (!formData.cardExpiry) {
+        errors.cardExpiry = "Expiry date is required"
+      } else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(formData.cardExpiry)) {
+        errors.cardExpiry = "Please use MM/YY format"
+      }
 
-    if (!formData.cardCvc) {
-      errors.cardCvc = "CVC is required"
-    } else if (!/^\d{3,4}$/.test(formData.cardCvc)) {
-      errors.cardCvc = "Please enter a valid CVC"
-    }
+      if (!formData.cardCvc) {
+        errors.cardCvc = "CVC is required"
+      } else if (!/^\d{3,4}$/.test(formData.cardCvc)) {
+        errors.cardCvc = "Please enter a valid CVC"
+      }
 
-    if (!formData.nameOnCard) {
-      errors.nameOnCard = "Name on card is required"
+      if (!formData.nameOnCard) {
+        errors.nameOnCard = "Name on card is required"
+      }
+    } else if (paymentMethod === "upi") {
+      if (!formData.upiId) {
+        errors.upiId = "UPI ID is required"
+      } else if (!/^[\w.-]+@[\w.-]+$/.test(formData.upiId)) {
+        errors.upiId = "Please enter a valid UPI ID"
+      }
     }
 
     return errors
@@ -172,7 +202,7 @@ export default function CheckoutPage() {
           address2: formData.address2,
           city: formData.city,
           state: formData.state,
-          zip: formData.zip,
+          pincode: formData.pincode,
           country: formData.country,
           method: shippingMethod,
           cost: shipping,
@@ -180,10 +210,11 @@ export default function CheckoutPage() {
         payment: {
           method: paymentMethod,
           lastFour: paymentMethod === "credit-card" ? formData.cardNumber.slice(-4) : null,
+          upiId: paymentMethod === "upi" ? formData.upiId : null,
         },
         items: cartItems,
         subtotal,
-        tax,
+        gst,
         total,
         date: new Date().toISOString(),
       }
@@ -204,42 +235,42 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-24">
-      <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-12 text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-gray-900">Checkout</h1>
-          <p className="mt-2 text-lg text-gray-600">Complete your order in just a few steps</p>
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-semibold tracking-tight text-gray-900 sm:text-4xl">Checkout</h1>
+          <p className="mt-2 text-base text-gray-600 sm:text-lg">Complete your order in just a few steps</p>
         </div>
 
         {/* Progress Steps */}
-        <div className="mb-12">
+        <div className="mb-8">
           <div className="mx-auto max-w-2xl">
             <div className="flex items-center justify-between">
               {steps.map((stepItem, index) => (
                 <div key={stepItem.number} className="flex items-center">
                   <div className="flex flex-col items-center">
                     <div
-                      className={`flex h-12 w-12 items-center justify-center rounded-full border-2 transition-all duration-300 ${
+                      className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 sm:h-12 sm:w-12 ${
                         step >= stepItem.number
                           ? "border-black bg-black text-white"
                           : "border-gray-300 bg-white text-gray-400"
                       }`}
                     >
                       {step > stepItem.number ? (
-                        <CheckCircle2 className="h-6 w-6" />
+                        <CheckCircle2 className="h-4 w-4 sm:h-6 sm:w-6" />
                       ) : (
-                        <stepItem.icon className="h-6 w-6" />
+                        <stepItem.icon className="h-4 w-4 sm:h-6 sm:w-6" />
                       )}
                     </div>
                     <span
-                      className={`mt-2 text-sm font-medium ${step >= stepItem.number ? "text-black" : "text-gray-400"}`}
+                      className={`mt-2 text-xs font-medium sm:text-sm ${step >= stepItem.number ? "text-black" : "text-gray-400"}`}
                     >
                       {stepItem.title}
                     </span>
                   </div>
                   {index < steps.length - 1 && (
                     <div
-                      className={`mx-4 h-0.5 w-16 transition-all duration-300 sm:w-24 ${
+                      className={`mx-2 h-0.5 w-8 transition-all duration-300 sm:mx-4 sm:w-16 lg:w-24 ${
                         step > stepItem.number ? "bg-black" : "bg-gray-300"
                       }`}
                     />
@@ -250,27 +281,27 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-3 lg:gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <div className="overflow-hidden rounded-3xl bg-white shadow-sm ring-1 ring-gray-100">
+            <div className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100 sm:rounded-3xl">
               {/* Step 1: Shipping */}
               {step === 1 && (
-                <div className="p-8">
-                  <div className="mb-8">
-                    <h2 className="text-2xl font-semibold text-gray-900">Shipping Information</h2>
+                <div className="p-6 sm:p-8">
+                  <div className="mb-6 sm:mb-8">
+                    <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">Shipping Information</h2>
                     <p className="mt-1 text-gray-600">Where should we send your order?</p>
                   </div>
 
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div className="space-y-4 sm:space-y-6">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6">
                       <div className="space-y-2">
                         <Label htmlFor="firstName" className="text-sm font-medium text-gray-900">
-                          First Name
+                          First Name *
                         </Label>
                         <Input
                           id="firstName"
-                          placeholder="John"
+                          placeholder="Enter first name"
                           value={formData.firstName}
                           onChange={handleInputChange}
                           className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
@@ -281,11 +312,11 @@ export default function CheckoutPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="lastName" className="text-sm font-medium text-gray-900">
-                          Last Name
+                          Last Name *
                         </Label>
                         <Input
                           id="lastName"
-                          placeholder="Doe"
+                          placeholder="Enter last name"
                           value={formData.lastName}
                           onChange={handleInputChange}
                           className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
@@ -298,12 +329,12 @@ export default function CheckoutPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-sm font-medium text-gray-900">
-                        Email Address
+                        Email Address *
                       </Label>
                       <Input
                         id="email"
                         type="email"
-                        placeholder="john.doe@example.com"
+                        placeholder="Enter email address"
                         value={formData.email}
                         onChange={handleInputChange}
                         className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
@@ -315,12 +346,12 @@ export default function CheckoutPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="phone" className="text-sm font-medium text-gray-900">
-                        Phone Number
+                        Mobile Number *
                       </Label>
                       <Input
                         id="phone"
                         type="tel"
-                        placeholder="(555) 123-4567"
+                        placeholder="Enter mobile number"
                         value={formData.phone}
                         onChange={handleInputChange}
                         className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
@@ -332,11 +363,11 @@ export default function CheckoutPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="address" className="text-sm font-medium text-gray-900">
-                        Street Address
+                        Street Address *
                       </Label>
                       <Input
                         id="address"
-                        placeholder="123 Main Street"
+                        placeholder="Address line 1"
                         value={formData.address}
                         onChange={handleInputChange}
                         className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
@@ -348,25 +379,25 @@ export default function CheckoutPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="address2" className="text-sm font-medium text-gray-900">
-                        Apartment, Suite, etc. (Optional)
+                        Landmark / Area (Optional)
                       </Label>
                       <Input
                         id="address2"
-                        placeholder="Apartment, suite, etc."
+                        placeholder="Address line 2"
                         value={formData.address2}
                         onChange={handleInputChange}
                         className="rounded-xl border-gray-200 focus:border-black focus:ring-black"
                       />
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
                       <div className="space-y-2">
                         <Label htmlFor="city" className="text-sm font-medium text-gray-900">
-                          City
+                          City *
                         </Label>
                         <Input
                           id="city"
-                          placeholder="New York"
+                          placeholder="Enter city"
                           value={formData.city}
                           onChange={handleInputChange}
                           className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
@@ -377,39 +408,58 @@ export default function CheckoutPage() {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="state" className="text-sm font-medium text-gray-900">
-                          State
+                          State *
                         </Label>
                         <Select
                           value={formData.state}
                           onValueChange={(value) => setFormData({ ...formData, state: value })}
                         >
-                          <SelectTrigger className="rounded-xl border-gray-200 focus:border-black focus:ring-black">
+                          <SelectTrigger className="rounded-xl border-gray-200 focus:border-black focus:ring-black w-full">
                             <SelectValue placeholder="Select state" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="NY">New York</SelectItem>
-                            <SelectItem value="CA">California</SelectItem>
-                            <SelectItem value="TX">Texas</SelectItem>
-                            <SelectItem value="FL">Florida</SelectItem>
-                            <SelectItem value="IL">Illinois</SelectItem>
+                            <SelectItem value="Maharashtra">Maharashtra</SelectItem>
+                            <SelectItem value="Delhi">Delhi</SelectItem>
+                            <SelectItem value="Karnataka">Karnataka</SelectItem>
+                            <SelectItem value="Tamil Nadu">Tamil Nadu</SelectItem>
+                            <SelectItem value="Gujarat">Gujarat</SelectItem>
+                            <SelectItem value="Rajasthan">Rajasthan</SelectItem>
+                            <SelectItem value="West Bengal">West Bengal</SelectItem>
+                            <SelectItem value="Uttar Pradesh">Uttar Pradesh</SelectItem>
+                            <SelectItem value="Haryana">Haryana</SelectItem>
+                            <SelectItem value="Punjab">Punjab</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="zip" className="text-sm font-medium text-gray-900">
-                          ZIP Code
+                        <Label htmlFor="pincode" className="text-sm font-medium text-gray-900">
+                          PIN Code *
                         </Label>
                         <Input
-                          id="zip"
-                          placeholder="10001"
-                          value={formData.zip}
+                          id="pincode"
+                          placeholder="400001"
+                          value={formData.pincode}
                           onChange={handleInputChange}
                           className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
-                            formErrors.zip ? "border-red-500" : ""
+                            formErrors.pincode ? "border-red-500" : ""
                           }`}
                         />
-                        {formErrors.zip && <p className="text-sm text-red-600">{formErrors.zip}</p>}
+                        {formErrors.pincode && <p className="text-sm text-red-600">{formErrors.pincode}</p>}
                       </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="gstNumber" className="text-sm font-medium text-gray-900">
+                        GST Number (Optional)
+                      </Label>
+                      <Input
+                        id="gstNumber"
+                        placeholder="22AAAAA0000A1Z5"
+                        value={formData.gstNumber}
+                        onChange={handleInputChange}
+                        className="rounded-xl border-gray-200 focus:border-black focus:ring-black"
+                      />
+                      <p className="text-xs text-gray-500">For business purchases and GST invoice</p>
                     </div>
 
                     <div className="space-y-2">
@@ -427,14 +477,14 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div className="mt-8 flex items-center justify-between border-t border-gray-100 pt-8">
+                  <div className="mt-6 flex flex-col gap-4 border-t border-gray-100 pt-6 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
                     <Button variant="ghost" asChild className="rounded-full">
                       <Link href="/cart">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Back to Cart
                       </Link>
                     </Button>
-                    <Button onClick={nextStep} className="rounded-full bg-black px-8 hover:bg-gray-800">
+                    <Button onClick={nextStep} className="rounded-full bg-black px-6 hover:bg-gray-800 sm:px-8">
                       Continue to Delivery
                     </Button>
                   </div>
@@ -443,67 +493,71 @@ export default function CheckoutPage() {
 
               {/* Step 2: Delivery */}
               {step === 2 && (
-                <div className="p-8">
-                  <div className="mb-8">
-                    <h2 className="text-2xl font-semibold text-gray-900">Delivery Options</h2>
+                <div className="p-6 sm:p-8">
+                  <div className="mb-6 sm:mb-8">
+                    <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">Delivery Options</h2>
                     <p className="mt-1 text-gray-600">Choose your preferred delivery method</p>
                   </div>
 
                   <RadioGroup value={shippingMethod} onValueChange={setShippingMethod} className="space-y-4">
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-6 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50">
+                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
                       <RadioGroupItem value="standard" id="standard" className="sr-only" />
                       <Label htmlFor="standard" className="cursor-pointer">
                         <div className="flex items-start justify-between">
-                          <div className="flex items-start space-x-4">
+                          <div className="flex items-start space-x-3 sm:space-x-4">
                             <div className="rounded-full bg-gray-100 p-2">
-                              <Package className="h-5 w-5 text-gray-600" />
+                              <Package className="h-4 w-4 text-gray-600 sm:h-5 sm:w-5" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-medium text-gray-900">Standard Shipping</h3>
-                              <p className="text-gray-600">Delivery in 5-7 business days</p>
-                              <p className="mt-1 text-sm text-gray-500">
+                              <h3 className="text-base font-medium text-gray-900 sm:text-lg">Standard Delivery</h3>
+                              <p className="text-sm text-gray-600 sm:text-base">Delivery in 5-7 business days</p>
+                              <p className="mt-1 text-xs text-gray-500 sm:text-sm">
                                 Perfect for non-urgent orders. Includes tracking and insurance.
                               </p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-lg font-semibold text-gray-900">{subtotal > 200 ? "Free" : "$25.00"}</p>
-                            {subtotal > 200 && <p className="text-sm text-green-600">Free shipping applied</p>}
+                            <p className="text-base font-semibold text-gray-900 sm:text-lg">
+                              {subtotal > 10000 ? "Free" : "₹350"}
+                            </p>
+                            {subtotal > 10000 && (
+                              <p className="text-xs text-green-600 sm:text-sm">Free delivery applied</p>
+                            )}
                           </div>
                         </div>
                       </Label>
                     </div>
 
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-6 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50">
+                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
                       <RadioGroupItem value="express" id="express" className="sr-only" />
                       <Label htmlFor="express" className="cursor-pointer">
                         <div className="flex items-start justify-between">
-                          <div className="flex items-start space-x-4">
+                          <div className="flex items-start space-x-3 sm:space-x-4">
                             <div className="rounded-full bg-blue-100 p-2">
-                              <Truck className="h-5 w-5 text-blue-600" />
+                              <Truck className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-medium text-gray-900">Express Shipping</h3>
-                              <p className="text-gray-600">Delivery in 2-3 business days</p>
-                              <p className="mt-1 text-sm text-gray-500">
+                              <h3 className="text-base font-medium text-gray-900 sm:text-lg">Express Delivery</h3>
+                              <p className="text-sm text-gray-600 sm:text-base">Delivery in 2-3 business days</p>
+                              <p className="mt-1 text-xs text-gray-500 sm:text-sm">
                                 Faster delivery with priority handling and tracking.
                               </p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-lg font-semibold text-gray-900">$35.00</p>
+                            <p className="text-base font-semibold text-gray-900 sm:text-lg">₹500</p>
                           </div>
                         </div>
                       </Label>
                     </div>
                   </RadioGroup>
 
-                  <div className="mt-8 flex items-center justify-between border-t border-gray-100 pt-8">
+                  <div className="mt-6 flex flex-col gap-4 border-t border-gray-100 pt-6 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
                     <Button variant="ghost" onClick={prevStep} className="rounded-full">
                       <ArrowLeft className="mr-2 h-4 w-4" />
                       Back to Shipping
                     </Button>
-                    <Button onClick={nextStep} className="rounded-full bg-black px-8 hover:bg-gray-800">
+                    <Button onClick={nextStep} className="rounded-full bg-black px-6 hover:bg-gray-800 sm:px-8">
                       Continue to Payment
                     </Button>
                   </div>
@@ -512,32 +566,73 @@ export default function CheckoutPage() {
 
               {/* Step 3: Payment */}
               {step === 3 && (
-                <div className="p-8">
-                  <div className="mb-8">
-                    <h2 className="text-2xl font-semibold text-gray-900">Payment Information</h2>
+                <div className="p-6 sm:p-8">
+                  <div className="mb-6 sm:mb-8">
+                    <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">Payment Information</h2>
                     <p className="mt-1 text-gray-600">Choose your payment method</p>
                   </div>
 
                   <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-4">
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-6 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50">
-                      <RadioGroupItem value="credit-card" id="credit-card" className="sr-only" />
-                      <Label htmlFor="credit-card" className="cursor-pointer">
-                        <div className="flex items-start space-x-4">
-                          <div className="rounded-full bg-gray-100 p-2">
-                            <CreditCard className="h-5 w-5 text-gray-600" />
+                    {/* UPI Payment */}
+                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
+                      <RadioGroupItem value="upi" id="upi" className="sr-only" />
+                      <Label htmlFor="upi" className="cursor-pointer">
+                        <div className="flex items-start space-x-3 sm:space-x-4">
+                          <div className="rounded-full bg-orange-100 p-2">
+                            <div className="h-4 w-4 rounded bg-orange-600 sm:h-5 sm:w-5"></div>
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-lg font-medium text-gray-900">Credit or Debit Card</h3>
-                            <p className="text-gray-600">Visa, Mastercard, American Express</p>
+                            <h3 className="text-base font-medium text-gray-900 sm:text-lg">UPI Payment</h3>
+                            <p className="text-sm text-gray-600 sm:text-base">
+                              Pay using Google Pay, PhonePe, Paytm, or any UPI app
+                            </p>
+                          </div>
+                        </div>
+                      </Label>
+
+                      {paymentMethod === "upi" && (
+                        <div className="mt-4 space-y-4 border-t border-gray-100 pt-4 sm:mt-6 sm:pt-6">
+                          <div className="space-y-2">
+                            <Label htmlFor="upiId" className="text-sm font-medium text-gray-900">
+                              UPI ID *
+                            </Label>
+                            <Input
+                              id="upiId"
+                              placeholder="yourname@paytm"
+                              value={formData.upiId}
+                              onChange={handleInputChange}
+                              className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
+                                formErrors.upiId ? "border-red-500" : ""
+                              }`}
+                            />
+                            {formErrors.upiId && <p className="text-sm text-red-600">{formErrors.upiId}</p>}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Credit/Debit Card */}
+                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
+                      <RadioGroupItem value="credit-card" id="credit-card" className="sr-only" />
+                      <Label htmlFor="credit-card" className="cursor-pointer">
+                        <div className="flex items-start space-x-3 sm:space-x-4">
+                          <div className="rounded-full bg-gray-100 p-2">
+                            <CreditCard className="h-4 w-4 text-gray-600 sm:h-5 sm:w-5" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-base font-medium text-gray-900 sm:text-lg">Credit or Debit Card</h3>
+                            <p className="text-sm text-gray-600 sm:text-base">
+                              Visa, Mastercard, RuPay, American Express
+                            </p>
                           </div>
                         </div>
                       </Label>
 
                       {paymentMethod === "credit-card" && (
-                        <div className="mt-6 space-y-4 border-t border-gray-100 pt-6">
+                        <div className="mt-4 space-y-4 border-t border-gray-100 pt-4 sm:mt-6 sm:pt-6">
                           <div className="space-y-2">
                             <Label htmlFor="cardNumber" className="text-sm font-medium text-gray-900">
-                              Card Number
+                              Card Number *
                             </Label>
                             <Input
                               id="cardNumber"
@@ -554,7 +649,7 @@ export default function CheckoutPage() {
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                               <Label htmlFor="cardExpiry" className="text-sm font-medium text-gray-900">
-                                Expiry Date
+                                Expiry Date *
                               </Label>
                               <Input
                                 id="cardExpiry"
@@ -569,7 +664,7 @@ export default function CheckoutPage() {
                             </div>
                             <div className="space-y-2">
                               <Label htmlFor="cardCvc" className="text-sm font-medium text-gray-900">
-                                CVC
+                                CVV *
                               </Label>
                               <Input
                                 id="cardCvc"
@@ -586,11 +681,11 @@ export default function CheckoutPage() {
 
                           <div className="space-y-2">
                             <Label htmlFor="nameOnCard" className="text-sm font-medium text-gray-900">
-                              Name on Card
+                              Name on Card *
                             </Label>
                             <Input
                               id="nameOnCard"
-                              placeholder="John Doe"
+                              placeholder="Rajesh Kumar"
                               value={formData.nameOnCard}
                               onChange={handleInputChange}
                               className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
@@ -603,16 +698,34 @@ export default function CheckoutPage() {
                       )}
                     </div>
 
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-6 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50">
-                      <RadioGroupItem value="paypal" id="paypal" className="sr-only" />
-                      <Label htmlFor="paypal" className="cursor-pointer">
-                        <div className="flex items-start space-x-4">
-                          <div className="rounded-full bg-blue-100 p-2">
-                            <div className="h-5 w-5 rounded bg-blue-600"></div>
+                    {/* Net Banking */}
+                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
+                      <RadioGroupItem value="netbanking" id="netbanking" className="sr-only" />
+                      <Label htmlFor="netbanking" className="cursor-pointer">
+                        <div className="flex items-start space-x-3 sm:space-x-4">
+                          <div className="rounded-full bg-green-100 p-2">
+                            <div className="h-4 w-4 rounded bg-green-600 sm:h-5 sm:w-5"></div>
                           </div>
                           <div>
-                            <h3 className="text-lg font-medium text-gray-900">PayPal</h3>
-                            <p className="text-gray-600">You'll be redirected to PayPal to complete your purchase</p>
+                            <h3 className="text-base font-medium text-gray-900 sm:text-lg">Net Banking</h3>
+                            <p className="text-sm text-gray-600 sm:text-base">Pay directly from your bank account</p>
+                          </div>
+                        </div>
+                      </Label>
+                    </div>
+
+                    {/* Cash on Delivery */}
+                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
+                      <RadioGroupItem value="cod" id="cod" className="sr-only" />
+                      <Label htmlFor="cod" className="cursor-pointer">
+                        <div className="flex items-start space-x-3 sm:space-x-4">
+                          <div className="rounded-full bg-yellow-100 p-2">
+                            <div className="h-4 w-4 rounded bg-yellow-600 sm:h-5 sm:w-5"></div>
+                          </div>
+                          <div>
+                            <h3 className="text-base font-medium text-gray-900 sm:text-lg">Cash on Delivery</h3>
+                            <p className="text-sm text-gray-600 sm:text-base">Pay when your order is delivered</p>
+                            <p className="mt-1 text-xs text-gray-500 sm:text-sm">Additional ₹50 COD charges apply</p>
                           </div>
                         </div>
                       </Label>
@@ -631,30 +744,30 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div className="mt-8 flex items-center justify-between border-t border-gray-100 pt-8">
+                  <div className="mt-6 flex flex-col gap-4 border-t border-gray-100 pt-6 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
                     <Button variant="ghost" onClick={prevStep} className="rounded-full">
                       <ArrowLeft className="mr-2 h-4 w-4" />
                       Back to Delivery
                     </Button>
-                    <Button onClick={nextStep} className="rounded-full bg-black px-8 hover:bg-gray-800">
+                    <Button onClick={nextStep} className="rounded-full bg-black px-6 hover:bg-gray-800 sm:px-8">
                       Review Order
                     </Button>
                   </div>
                 </div>
               )}
 
-              {/* Step 4: Review */}
+              {/* Step 4: Review - keeping existing code with currency updates */}
               {step === 4 && (
-                <div className="p-8">
-                  <div className="mb-8">
-                    <h2 className="text-2xl font-semibold text-gray-900">Review Your Order</h2>
+                <div className="p-6 sm:p-8">
+                  <div className="mb-6 sm:mb-8">
+                    <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">Review Your Order</h2>
                     <p className="mt-1 text-gray-600">Please review your order details before placing your order</p>
                   </div>
 
-                  <div className="space-y-8">
+                  <div className="space-y-6 sm:space-y-8">
                     {/* Shipping Address */}
-                    <div className="rounded-2xl border border-gray-200 p-6">
-                      <h3 className="mb-4 text-lg font-medium text-gray-900">Shipping Address</h3>
+                    <div className="rounded-2xl border border-gray-200 p-4 sm:p-6">
+                      <h3 className="mb-4 text-base font-medium text-gray-900 sm:text-lg">Shipping Address</h3>
                       <div className="text-gray-700">
                         <p className="font-medium">
                           {formData.firstName} {formData.lastName}
@@ -662,49 +775,57 @@ export default function CheckoutPage() {
                         <p>{formData.address}</p>
                         {formData.address2 && <p>{formData.address2}</p>}
                         <p>
-                          {formData.city}, {formData.state} {formData.zip}
+                          {formData.city}, {formData.state} {formData.pincode}
                         </p>
                         <p className="mt-2 text-sm text-gray-600">{formData.email}</p>
-                        <p className="text-sm text-gray-600">{formData.phone}</p>
+                        <p className="text-sm text-gray-600">+91 {formData.phone}</p>
+                        {formData.gstNumber && <p className="text-sm text-gray-600">GST: {formData.gstNumber}</p>}
                       </div>
                     </div>
 
                     {/* Shipping Method */}
-                    <div className="rounded-2xl border border-gray-200 p-6">
-                      <h3 className="mb-4 text-lg font-medium text-gray-900">Delivery Method</h3>
+                    <div className="rounded-2xl border border-gray-200 p-4 sm:p-6">
+                      <h3 className="mb-4 text-base font-medium text-gray-900 sm:text-lg">Delivery Method</h3>
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-medium text-gray-900">
-                            {shippingMethod === "standard" ? "Standard Shipping" : "Express Shipping"}
+                            {shippingMethod === "standard" ? "Standard Delivery" : "Express Delivery"}
                           </p>
                           <p className="text-gray-600">
                             {shippingMethod === "standard" ? "5-7 business days" : "2-3 business days"}
                           </p>
                         </div>
-                        <p className="font-medium text-gray-900">
-                          {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
-                        </p>
+                        <p className="font-medium text-gray-900">{shipping === 0 ? "Free" : `₹${shipping}`}</p>
                       </div>
                     </div>
 
                     {/* Payment Method */}
-                    <div className="rounded-2xl border border-gray-200 p-6">
-                      <h3 className="mb-4 text-lg font-medium text-gray-900">Payment Method</h3>
+                    <div className="rounded-2xl border border-gray-200 p-4 sm:p-6">
+                      <h3 className="mb-4 text-base font-medium text-gray-900 sm:text-lg">Payment Method</h3>
                       <div className="flex items-center space-x-3">
                         <CreditCard className="h-5 w-5 text-gray-600" />
                         <div>
                           <p className="font-medium text-gray-900">
-                            {paymentMethod === "credit-card" ? "Credit Card" : "PayPal"}
+                            {paymentMethod === "credit-card"
+                              ? "Credit/Debit Card"
+                              : paymentMethod === "upi"
+                                ? "UPI Payment"
+                                : paymentMethod === "netbanking"
+                                  ? "Net Banking"
+                                  : "Cash on Delivery"}
                           </p>
                           {paymentMethod === "credit-card" && formData.cardNumber && (
                             <p className="text-gray-600">Ending in {formData.cardNumber.slice(-4)}</p>
+                          )}
+                          {paymentMethod === "upi" && formData.upiId && (
+                            <p className="text-gray-600">{formData.upiId}</p>
                           )}
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-8 flex items-center justify-between border-t border-gray-100 pt-8">
+                  <div className="mt-6 flex flex-col gap-4 border-t border-gray-100 pt-6 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
                     <Button variant="ghost" onClick={prevStep} className="rounded-full">
                       <ArrowLeft className="mr-2 h-4 w-4" />
                       Back to Payment
@@ -712,7 +833,7 @@ export default function CheckoutPage() {
                     <Button
                       onClick={handlePlaceOrder}
                       disabled={isSubmitting}
-                      className="rounded-full bg-black px-8 hover:bg-gray-800 disabled:opacity-50"
+                      className="rounded-full bg-black px-6 hover:bg-gray-800 disabled:opacity-50 sm:px-8"
                     >
                       {isSubmitting ? (
                         <>
@@ -734,57 +855,65 @@ export default function CheckoutPage() {
 
           {/* Order Summary Sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24 rounded-3xl bg-white p-8 shadow-sm ring-1 ring-gray-100">
-              <h2 className="mb-6 text-xl font-semibold text-gray-900">Order Summary</h2>
+            <div className="sticky top-24 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100 sm:rounded-3xl sm:p-8">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900 sm:mb-6 sm:text-xl">Order Summary</h2>
 
               {/* Order Items */}
-              <div className="mb-6 space-y-4">
+              <div className="mb-4 space-y-4 sm:mb-6">
                 {cartItems.map((item) => (
-                  <div key={item.id} className="flex space-x-4">
-                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100">
+                  <div key={item.id} className="flex space-x-3 sm:space-x-4">
+                    <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-16 sm:w-16">
                       <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
-                      <div className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-900 text-xs font-medium text-white">
+                      <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-xs font-medium text-white sm:-right-2 sm:-top-2 sm:h-6 sm:w-6">
                         {item.quantity}
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-gray-900">{item.name}</h3>
-                      <p className="text-sm text-gray-600">{item.specs}</p>
-                      <p className="mt-1 font-medium text-gray-900">₹{(item.price * item.quantity).toFixed(2)}</p>
+                      <h3 className="text-sm font-medium text-gray-900 sm:text-base">{item.name}</h3>
+                      <p className="text-xs text-gray-600 sm:text-sm">{item.specs}</p>
+                      <p className="mt-1 text-sm font-medium text-gray-900 sm:text-base">
+                        ₹{(item.price * item.quantity).toLocaleString()}
+                      </p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <Separator className="my-6" />
+              <Separator className="my-4 sm:my-6" />
 
               {/* Pricing Breakdown */}
-              <div className="space-y-3">
-                <div className="flex justify-between text-gray-700">
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex justify-between text-sm text-gray-700 sm:text-base">
                   <span>Subtotal</span>
-                  <span>₹{subtotal.toFixed(2)}</span>
+                  <span>₹{subtotal.toLocaleString()}</span>
                 </div>
-                {/* <div className="flex justify-between text-gray-700">
-                  <span>Shipping</span>
-                  <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
-                </div> */}
-                <div className="flex justify-between text-gray-700">
-                  <span>Tax</span>
-                  <span>₹{tax.toFixed(2)}</span>
+                <div className="flex justify-between text-sm text-gray-700 sm:text-base">
+                  <span>Delivery</span>
+                  <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
                 </div>
-                <Separator className="my-4" />
-                <div className="flex justify-between text-xl font-semibold text-gray-900">
+                <div className="flex justify-between text-sm text-gray-700 sm:text-base">
+                  <span>GST (18%)</span>
+                  <span>₹{gst.toLocaleString()}</span>
+                </div>
+                {paymentMethod === "cod" && (
+                  <div className="flex justify-between text-sm text-gray-700 sm:text-base">
+                    <span>COD Charges</span>
+                    <span>₹50</span>
+                  </div>
+                )}
+                <Separator className="my-3 sm:my-4" />
+                <div className="flex justify-between text-lg font-semibold text-gray-900 sm:text-xl">
                   <span>Total</span>
-                  <span>₹{total.toFixed(2)}</span>
+                  <span>₹{(total + (paymentMethod === "cod" ? 50 : 0)).toLocaleString()}</span>
                 </div>
               </div>
 
               {/* Security Badge */}
-              <div className="mt-6 rounded-xl bg-gray-50 p-4">
+              <div className="mt-4 rounded-xl bg-gray-50 p-3 sm:mt-6 sm:p-4">
                 <div className="flex items-center space-x-3">
-                  <ShieldCheck className="h-5 w-5 text-green-600" />
+                  <ShieldCheck className="h-4 w-4 text-green-600 sm:h-5 sm:w-5" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">Secure Checkout</p>
+                    <p className="text-xs font-medium text-gray-900 sm:text-sm">Secure Checkout</p>
                     <p className="text-xs text-gray-600">SSL encrypted and secure</p>
                   </div>
                 </div>

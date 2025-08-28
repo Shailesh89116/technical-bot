@@ -1,112 +1,105 @@
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
+
+import Link from "next/link"
+import Image from "next/image"
 import { useState, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Search, SlidersHorizontal, X } from "lucide-react"
-import ProductCard from "@/components/shop/product-card"
-import { productList } from "@/dummy-data/allProducts"
-import { Slider } from "../ui/slider"
+import { SlidersHorizontal, X } from "lucide-react"
+import { Slider } from "@/components/ui/slider"
+import { products } from "@/dummy-data/products"
+import { Product } from "@/dummy-data/type"
 
-const getFilterOptions = () => {
-  const allThickness = new Set<string>()
-  const allFinish = new Set<string>()
-  const allBrands = new Set<string>()
-
-  productList.forEach((product) => {
-    allThickness.add(product.thickness)
-    allFinish.add(product.finish)
-    allBrands.add(product.brand)
-  })
-
-  return {
-    thickness: Array.from(allThickness).sort(),
-    finish: Array.from(allFinish).sort(),
-    brands: Array.from(allBrands).sort(),
-  }
-}
-
-export default function CategoryPage() {
+export default function ProductsPage() {
   const [sortBy, setSortBy] = useState("featured")
-  const [searchQuery, setSearchQuery] = useState("")
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
-  // Essential filters only
-  const [priceRange, setPriceRange] = useState([0, 800])
+  // Price range filter
+  const [priceRange, setPriceRange] = useState([0, 10000])
   const [selectedThickness, setSelectedThickness] = useState<string[]>([])
-  const [selectedFinish, setSelectedFinish] = useState<string[]>([])
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([])
+  const [imageLoaded, setImageLoaded] = useState(false)
 
-  const [wishlist, setWishlist] = useState<number[]>([])
+  const filterOptions = useMemo(() => {
+    const allThickness = new Set<string>()
+    const allCategories = new Set<string>()
+    const allSizes = new Set<string>()
 
-  const filterOptions = getFilterOptions()
+    products.forEach((product) => {
+      if (product.thickness) allThickness.add(product.thickness)
+      allCategories.add(product.category)
+      if (product.sizes) {
+        product.sizes.forEach((size) => allSizes.add(size.name))
+      }
+    })
 
-  // Real-time filtering - no "apply" button needed
+    return {
+      thickness: Array.from(allThickness).sort(),
+      categories: Array.from(allCategories).sort(),
+      sizes: Array.from(allSizes).sort(),
+    }
+  }, [])
+
   const filteredProducts = useMemo(() => {
-    let filtered = productList
+    let filtered = products
 
-    // Search
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (product) =>
-          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.brand.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
-    }
+    // Price filter
+    filtered = filtered.filter((product) => {
+      const productPrice = typeof product.price === "number" ? product.price : 0
+      return productPrice >= priceRange[0] && productPrice <= priceRange[1]
+    })
 
-    // Price
-    filtered = filtered.filter((product) => product.price >= priceRange[0] && product.price <= priceRange[1])
-
-    // Thickness
+    // Thickness filter
     if (selectedThickness.length > 0) {
-      filtered = filtered.filter((product) => selectedThickness.includes(product.thickness))
+      filtered = filtered.filter((product) => product.thickness && selectedThickness.includes(product.thickness))
     }
 
-    // Finish
-    if (selectedFinish.length > 0) {
-      filtered = filtered.filter((product) => selectedFinish.includes(product.finish))
+    // Category filter
+    if (selectedCategories.length > 0) {
+      filtered = filtered.filter((product) => selectedCategories.includes(product.category))
     }
 
-    // Brand
-    if (selectedBrands.length > 0) {
-      filtered = filtered.filter((product) => selectedBrands.includes(product.brand))
+    // Size filter
+    if (selectedSizes.length > 0) {
+      filtered = filtered.filter(
+        (product) => product.sizes && product.sizes.some((size) => selectedSizes.includes(size.name)),
+      )
     }
 
     // Sort
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case "price-low":
-          return a.price - b.price
+          const priceA = typeof a.price === "number" ? a.price : 0
+          const priceB = typeof b.price === "number" ? b.price : 0
+          return priceA - priceB
         case "price-high":
-          return b.price - a.price
-        case "newest":
-          return b.id - a.id
+          const priceA2 = typeof a.price === "number" ? a.price : 0
+          const priceB2 = typeof b.price === "number" ? b.price : 0
+          return priceB2 - priceA2
+        case "name":
+          return a.name.localeCompare(b.name)
         default:
           return 0
       }
     })
-  }, [searchQuery, priceRange, selectedThickness, selectedFinish, selectedBrands, sortBy])
-
-  const toggleWishlist = (productId: number) => {
-    setWishlist((prev) => (prev.includes(productId) ? prev.filter((id) => id !== productId) : [...prev, productId]))
-  }
+  }, [priceRange, selectedThickness, selectedCategories, selectedSizes, sortBy])
 
   const hasActiveFilters =
     priceRange[0] > 0 ||
-    priceRange[1] < 800 ||
+    priceRange[1] < 10000 ||
     selectedThickness.length > 0 ||
-    selectedFinish.length > 0 ||
-    selectedBrands.length > 0
+    selectedCategories.length > 0 ||
+    selectedSizes.length > 0
 
   const clearAllFilters = () => {
-    setPriceRange([0, 800])
+    setPriceRange([0, 10000])
     setSelectedThickness([])
-    setSelectedFinish([])
-    setSelectedBrands([])
-    setSearchQuery("")
+    setSelectedCategories([])
+    setSelectedSizes([])
   }
 
   const formatPrice = (price: number) => {
@@ -117,7 +110,6 @@ export default function CategoryPage() {
     }).format(price)
   }
 
-  // Filter chip component
   const FilterChip = ({
     label,
     isSelected,
@@ -139,8 +131,6 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-white">
-
-      {/* Hero */}
       <div className="pt-16">
         <div className="mx-auto max-w-6xl px-6 py-20">
           <div className="text-center">
@@ -150,7 +140,6 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      {/* Filters & Controls */}
       <div className="mx-auto max-w-6xl md:px-6">
         {/* Desktop Filters - Horizontal, Clean */}
         <div className="hidden lg:block mb-12">
@@ -162,9 +151,9 @@ export default function CategoryPage() {
               <div className="flex items-center space-x-3">
                 <span className="text-sm text-gray-600">Price</span>
                 <div className="w-32">
-                  <Slider value={priceRange} onValueChange={setPriceRange} max={800} step={25} className="w-full" />
+                  <Slider value={priceRange} onValueChange={setPriceRange} max={10000} step={100} className="w-full" />
                 </div>
-                <span className="text-sm text-gray-600 min-w-[100px]">
+                <span className="text-sm text-gray-600 min-w-[120px]">
                   {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
                 </span>
               </div>
@@ -180,7 +169,7 @@ export default function CategoryPage() {
                   <SelectItem value="featured">Featured</SelectItem>
                   <SelectItem value="price-low">Price: Low to High</SelectItem>
                   <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="newest">Newest</SelectItem>
+                  <SelectItem value="name">Name (A-Z)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -207,18 +196,18 @@ export default function CategoryPage() {
               </div>
             </div>
 
-            {/* Finish */}
+            {/* Size */}
             <div className="flex items-center space-x-3">
-              <span className="text-sm text-gray-600 w-20">Finish</span>
+              <span className="text-sm text-gray-600 w-20">Size</span>
               <div className="flex flex-wrap gap-2">
-                {filterOptions.finish.map((finish) => (
+                {filterOptions.sizes.slice(0, 8).map((size) => (
                   <FilterChip
-                    key={finish}
-                    label={finish}
-                    isSelected={selectedFinish.includes(finish)}
+                    key={size}
+                    label={size}
+                    isSelected={selectedSizes.includes(size)}
                     onClick={() => {
-                      setSelectedFinish((prev) =>
-                        prev.includes(finish) ? prev.filter((f) => f !== finish) : [...prev, finish],
+                      setSelectedSizes((prev) =>
+                        prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size],
                       )
                     }}
                   />
@@ -226,18 +215,18 @@ export default function CategoryPage() {
               </div>
             </div>
 
-            {/* Brand */}
+            {/* Category */}
             <div className="flex items-center space-x-3">
               <span className="text-sm text-gray-600 w-20">Category</span>
               <div className="flex flex-wrap gap-2">
-                {filterOptions.brands.map((brand) => (
+                {filterOptions.categories.map((category) => (
                   <FilterChip
-                    key={brand}
-                    label={brand}
-                    isSelected={selectedBrands.includes(brand)}
+                    key={category}
+                    label={category}
+                    isSelected={selectedCategories.includes(category)}
                     onClick={() => {
-                      setSelectedBrands((prev) =>
-                        prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand],
+                      setSelectedCategories((prev) =>
+                        prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
                       )
                     }}
                   />
@@ -266,7 +255,7 @@ export default function CategoryPage() {
               <SelectItem value="featured">Featured</SelectItem>
               <SelectItem value="price-low">Price: Low to High</SelectItem>
               <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="newest">Newest</SelectItem>
+              <SelectItem value="name">Name (A-Z)</SelectItem>
             </SelectContent>
           </Select>
 
@@ -303,8 +292,8 @@ export default function CategoryPage() {
                   <Slider
                     value={priceRange}
                     onValueChange={setPriceRange}
-                    max={800}
-                    step={25}
+                    max={10000}
+                    step={100}
                     className="w-full mb-3"
                   />
                   <div className="flex justify-between text-sm text-gray-600">
@@ -332,18 +321,18 @@ export default function CategoryPage() {
                   </div>
                 </div>
 
-                {/* Finish */}
+                {/* Size */}
                 <div>
-                  <h3 className="text-lg font-medium mb-4">Finish</h3>
+                  <h3 className="text-lg font-medium mb-4">Size</h3>
                   <div className="flex flex-wrap gap-2">
-                    {filterOptions.finish.map((finish) => (
+                    {filterOptions.sizes.map((size) => (
                       <FilterChip
-                        key={finish}
-                        label={finish}
-                        isSelected={selectedFinish.includes(finish)}
+                        key={size}
+                        label={size}
+                        isSelected={selectedSizes.includes(size)}
                         onClick={() => {
-                          setSelectedFinish((prev) =>
-                            prev.includes(finish) ? prev.filter((f) => f !== finish) : [...prev, finish],
+                          setSelectedSizes((prev) =>
+                            prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size],
                           )
                         }}
                       />
@@ -351,18 +340,18 @@ export default function CategoryPage() {
                   </div>
                 </div>
 
-                {/* Brand */}
+                {/* Category */}
                 <div>
-                  <h3 className="text-lg font-medium mb-4">Brand</h3>
+                  <h3 className="text-lg font-medium mb-4">Category</h3>
                   <div className="flex flex-wrap gap-2">
-                    {filterOptions.brands.map((brand) => (
+                    {filterOptions.categories.map((category) => (
                       <FilterChip
-                        key={brand}
-                        label={brand}
-                        isSelected={selectedBrands.includes(brand)}
+                        key={category}
+                        label={category}
+                        isSelected={selectedCategories.includes(category)}
                         onClick={() => {
-                          setSelectedBrands((prev) =>
-                            prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand],
+                          setSelectedCategories((prev) =>
+                            prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category],
                           )
                         }}
                       />
@@ -376,7 +365,7 @@ export default function CategoryPage() {
 
         {/* Active Filters Display */}
         {hasActiveFilters && (
-          <div className="mb-8">
+          <div className="mb-8 px-6 md:px-0">
             <div className="flex flex-wrap gap-2 items-center">
               <span className="text-sm text-gray-600">Active filters:</span>
               {selectedThickness.map((thickness) => (
@@ -390,32 +379,32 @@ export default function CategoryPage() {
                   </button>
                 </Badge>
               ))}
-              {selectedFinish.map((finish) => (
-                <Badge key={finish} variant="secondary" className="bg-gray-100 text-gray-700">
-                  {finish}
+              {selectedSizes.map((size) => (
+                <Badge key={size} variant="secondary" className="bg-gray-100 text-gray-700">
+                  {size}
                   <button
-                    onClick={() => setSelectedFinish((prev) => prev.filter((f) => f !== finish))}
+                    onClick={() => setSelectedSizes((prev) => prev.filter((s) => s !== size))}
                     className="ml-2 hover:text-gray-900"
                   >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
               ))}
-              {selectedBrands.map((brand) => (
-                <Badge key={brand} variant="secondary" className="bg-gray-100 text-gray-700">
-                  {brand}
+              {selectedCategories.map((category) => (
+                <Badge key={category} variant="secondary" className="bg-gray-100 text-gray-700">
+                  {category}
                   <button
-                    onClick={() => setSelectedBrands((prev) => prev.filter((b) => b !== brand))}
+                    onClick={() => setSelectedCategories((prev) => prev.filter((c) => c !== category))}
                     className="ml-2 hover:text-gray-900"
                   >
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
               ))}
-              {(priceRange[0] > 0 || priceRange[1] < 800) && (
+              {(priceRange[0] > 0 || priceRange[1] < 10000) && (
                 <Badge variant="secondary" className="bg-gray-100 text-gray-700">
                   {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
-                  <button onClick={() => setPriceRange([0, 800])} className="ml-2 hover:text-gray-900">
+                  <button onClick={() => setPriceRange([0, 10000])} className="ml-2 hover:text-gray-900">
                     <X className="h-3 w-3" />
                   </button>
                 </Badge>
@@ -426,35 +415,53 @@ export default function CategoryPage() {
 
         {/* Products Grid */}
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:gap-8 mb-20 ">
-            {filteredProducts.map((product) => (
-              <ProductCard
+          <div className="grid grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4 mb-20 px-0 md:px-0">
+            {filteredProducts.map((product: Product) => (
+              <Link
                 key={product.id}
-                product={product}
-                isWishlisted={wishlist.includes(product.id)}
-                onToggleWishlist={() => toggleWishlist(product.id)}
-              />
+                href={`/product/${product.id}`}
+                className="group block bg-white md:rounded-lg border hover:shadow-lg transition-shadow duration-200"
+              >
+                <div className="aspect-square relative overflow-hidden md:rounded-t-lg bg-gray-100">
+          
+                  <Image
+                              src={product.images[0] || "/placeholder.svg?height=300&width=300&query=acrylic sheet"}
+                              alt={product.name}
+                              fill
+                              className={`object-cover transition-all duration-700 ease-out ${
+                                imageLoaded ? "opacity-100" : "opacity-0"
+                              } group-hover:scale-[1.02]`}
+                              onLoad={() => setImageLoaded(true)}
+                              sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                            />
+                </div>
+                <div className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                      {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                    </span>
+                  </div>
+                  <h3 className="font-semibold text-gray-900 group-hover:text-gray-700 transition-colors">
+                    {product.name}
+                  </h3>
+                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
+
+                </div>
+              </Link>
             ))}
           </div>
         ) : (
           /* Empty State */
           <div className="text-center py-20">
             <div className="mb-6">
-              <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                <Search className="w-6 h-6 text-gray-400" />
-              </div>
-              <h3 className="text-2xl font-light text-gray-900 mb-2">
-                {searchQuery ? `No results for "${searchQuery}"` : "No products match your filters"}
-              </h3>
-              <p className="text-gray-600 mb-6">
-                {searchQuery ? "Try a different search term" : "Try adjusting your filters"}
-              </p>
+              <h3 className="text-2xl font-light text-gray-900 mb-2">No products match your filters</h3>
+              <p className="text-gray-600 mb-6">Try adjusting your filters</p>
               <Button
                 onClick={clearAllFilters}
                 variant="outline"
                 className="rounded-full border-gray-200 bg-transparent"
               >
-                {searchQuery ? "Clear search and filters" : "Clear all filters"}
+                Clear all filters
               </Button>
             </div>
           </div>
