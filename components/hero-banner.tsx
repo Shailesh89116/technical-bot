@@ -38,8 +38,8 @@ export function HeroBanner() {
     },
     {
       image: "/sanitary-banner.jpg",
-      title: "Bring Nature In",
-      subtitle: "Experience the perfect blend of indoors and outdoors",
+      title: "Sanitary Acrylic",
+      subtitle: "Smooth, strong & hygienic sheets for modern bathroom designs",
       textColor: "text-white",
       // textShadow: true,
     },
