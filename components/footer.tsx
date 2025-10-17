@@ -40,18 +40,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-muted-foreground hover:text-primary">
-                  About Us
-                </Link>
-              </li>
-              <li>
                 <Link href="/resources" className="text-muted-foreground hover:text-primary">
                   Resources & Downloads
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="text-muted-foreground hover:text-primary">
-                  FAQ
                 </Link>
               </li>
               <li>
@@ -61,45 +51,25 @@ export function Footer() {
               </li>
             </ul>
           </div>
-          <div>
-            <h3 className="mb-4 text-lg font-medium">Resources</h3>
-            <ul className="grid gap-2 text-sm">
-              <li>
-                <Link href="/resources/brochures" className="text-muted-foreground hover:text-primary">
-                  Brochures & Data Sheets
-                </Link>
-              </li>
-              <li>
-                <Link href="/resources/guides" className="text-muted-foreground hover:text-primary">
-                  Application Guides
-                </Link>
-              </li>
-              <li>
-                <Link href="/resources/case-studies" className="text-muted-foreground hover:text-primary">
-                  Case Studies
-                </Link>
-              </li>
-              <li>
-                <Link href="/resources/technical" className="text-muted-foreground hover:text-primary">
-                  Technical Guides
-                </Link>
-              </li>
-            </ul>
-          </div>
+
           <div>
             <h3 className="mb-4 text-lg font-medium">Contact Us</h3>
             <ul className="grid gap-4 text-sm">
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 h-4 w-4 text-primary" />
-                <span>+91 9876543210</span>
+                <span>+91 9594084630</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Phone className="mt-0.5 h-4 w-4 text-primary" />
+                <span>+91 9594084626</span>
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="mt-0.5 h-4 w-4 text-primary" />
-                <span>info@aclindia.co</span>
+                <span>shinkolite@aclindia.co</span>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-4 w-4 text-primary" />
-                <span>123 Acrylic Way, Clarity City, AC 12345</span>
+                <span>A/16, Patel Shopping Centre, Off Chandavarkar Road, Borivali West, Mumbai 400092</span>
               </li>
             </ul>
           </div>

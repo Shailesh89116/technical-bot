@@ -22,12 +22,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useCart } from "@/context/cart-context";
 
 export function Navigation() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  const { items, isLoading } = useCart();
+  const itemCount = items.length;
 
   // Check if current page is homepage
   const isHomePage = pathname === "/";
@@ -257,7 +261,7 @@ export function Navigation() {
                               : "bg-black text-white"
                           }`}
                         >
-                          0
+                          {!isLoading && itemCount > 0 ? <p>{itemCount}</p> : 0}
                         </span>
                       </Button>
                     </TooltipTrigger>

@@ -9,10 +9,15 @@ import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { SlidersHorizontal, X } from "lucide-react"
 import { Slider } from "@/components/ui/slider"
-import { products } from "@/dummy-data/products"
-import { Product } from "@/dummy-data/type"
+// import { products } from "@/dummy-data/products"
+import { Products } from "@/dummy-data/type"
 
-export default function ProductsPage() {
+
+interface ProductsPageProps {
+  products: Products[]
+}
+
+export default function ProductsPage({products}: ProductsPageProps) {
   const [sortBy, setSortBy] = useState("featured")
   const [isFilterOpen, setIsFilterOpen] = useState(false)
 
@@ -30,7 +35,7 @@ export default function ProductsPage() {
 
     products.forEach((product) => {
       if (product.thickness) allThickness.add(product.thickness)
-      allCategories.add(product.category)
+      if (product.series?.name) allCategories.add(product.series.name)
       if (product.sizes) {
         product.sizes.forEach((size) => allSizes.add(size.name))
       }
@@ -48,7 +53,7 @@ export default function ProductsPage() {
 
     // Price filter
     filtered = filtered.filter((product) => {
-      const productPrice = typeof product.price === "number" ? product.price : 0
+      const productPrice = typeof product.basePrice === "number" ? product.basePrice : 0
       return productPrice >= priceRange[0] && productPrice <= priceRange[1]
     })
 
@@ -59,7 +64,7 @@ export default function ProductsPage() {
 
     // Category filter
     if (selectedCategories.length > 0) {
-      filtered = filtered.filter((product) => selectedCategories.includes(product.category))
+      filtered = filtered.filter((product) => selectedCategories.includes(product.series?.name || ""))
     }
 
     // Size filter
@@ -73,12 +78,12 @@ export default function ProductsPage() {
     return filtered.sort((a, b) => {
       switch (sortBy) {
         case "price-low":
-          const priceA = typeof a.price === "number" ? a.price : 0
-          const priceB = typeof b.price === "number" ? b.price : 0
+          const priceA = typeof a.basePrice === "number" ? a.basePrice : 0
+          const priceB = typeof b.basePrice === "number" ? b.basePrice : 0
           return priceA - priceB
         case "price-high":
-          const priceA2 = typeof a.price === "number" ? a.price : 0
-          const priceB2 = typeof b.price === "number" ? b.price : 0
+          const priceA2 = typeof a.basePrice === "number" ? a.basePrice : 0
+          const priceB2 = typeof b.basePrice === "number" ? b.basePrice : 0
           return priceB2 - priceA2
         case "name":
           return a.name.localeCompare(b.name)
@@ -86,7 +91,7 @@ export default function ProductsPage() {
           return 0
       }
     })
-  }, [priceRange, selectedThickness, selectedCategories, selectedSizes, sortBy])
+  }, [products, selectedThickness, selectedCategories, selectedSizes, priceRange, sortBy])
 
   const hasActiveFilters =
     priceRange[0] > 0 ||
@@ -416,7 +421,7 @@ export default function ProductsPage() {
         {/* Products Grid */}
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4 mb-20 px-0 md:px-0">
-            {filteredProducts.map((product: Product) => (
+            {filteredProducts.map((product: Products) => (
               <Link
                 key={product.id}
                 href={`/product/${product.id}`}
@@ -425,7 +430,7 @@ export default function ProductsPage() {
                 <div className="aspect-square relative overflow-hidden md:rounded-t-lg bg-gray-100">
           
                   <Image
-                              src={product.images[0] || "/placeholder.svg?height=300&width=300&query=acrylic sheet"}
+                              src={product.images[0].url || "/placeholder.svg?height=300&width=300&query=acrylic sheet"}
                               alt={product.name}
                               fill
                               className={`object-cover transition-all duration-700 ease-out ${
@@ -437,10 +442,10 @@ export default function ProductsPage() {
                 </div>
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
-                      {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
-                    </span>
-                  </div>
+                        <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                          {product.series?.name ? product.series.name.charAt(0).toUpperCase() + product.series.name.slice(1) : ""}
+                        </span>
+                      </div>
                   <h3 className="font-semibold text-gray-900 group-hover:text-gray-700 transition-colors">
                     {product.name}
                   </h3>

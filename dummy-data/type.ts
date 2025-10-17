@@ -57,3 +57,109 @@ export interface Product {
   attributes: Attributes
   variants?: VariantOption[] // only used in Advertising
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ----------------- BASE TYPES -----------------
+type Id = string;
+type Nullable<T> = T | null;
+
+// ----------------- PRODUCT RELATIONS -----------------
+export type Category = {
+  name: string;
+};
+
+export type Series = {
+
+  name: string;
+};
+
+export type ProductSize = {
+  id: Id;
+  name: string;
+  price: number;
+  memberPrice?: Nullable<number>;
+  inStock: boolean;
+  stockCount: number;
+  productId: Id;
+};
+
+export type Attribute = {
+  id: Id;
+  key: string;
+  value: string;
+  productId: Id;
+};
+
+export type Image = {
+  id: Id;
+  url: string;
+  alt?: Nullable<string>;
+  productId: Id;
+};
+
+export type Variant = {
+  id: Id;
+  colorName?: Nullable<string>;
+  code?: Nullable<string>;
+  image?: Nullable<string>;
+  productId: Id;
+};
+
+// ----------------- PRODUCT TYPE -----------------
+export type Products = {
+  id: Id;
+  name: string;
+  code?: Nullable<string>;
+  description?: Nullable<string>;
+  thickness?: Nullable<string>;
+  thicknessRange?: Nullable<string>;
+  span?: Nullable<string>;
+  inStock: boolean;
+  basePrice?: Nullable<number>;
+  features: string[];
+  application?: Nullable<string>;
+  // maxCustomSize?: { width: string; length: string; } | null | undefined
+  seriesId: Id | null;
+  categoryId?: Nullable<Id>;
+  createdAt: Date;
+  updatedAt: Date;
+
+  // Nested relations
+  category?: Nullable<Category>;
+  series?: Nullable<Series>;
+  sizes: ProductSize[];
+  attributes: Attribute[];
+  images: Image[];
+  variants: Variant[];
+};

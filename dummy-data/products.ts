@@ -627,7 +627,11 @@ export const products: Product[] = [
         stockCount: 10,
       },
     ],
-    features: ["Even surface", "Minimal impurities", "High moldability"],
+    features: [
+      "Have a wide range of widths and lengths, making them ideal for large advertising signs or large, seamless projects.",
+      "Impurities are trapped from the raw material preparation stage, ensuring that the resulting product is clean and contains few impurities.",
+      "Can use heat to bend or form the workpiece, making it unique and reducing work limitations.",
+    ],
     application:
       "Widely used in the production of sanitary ware like wash basins and bathtubs.",
     images: ["/sanitary/sanitary-banner.jpg"],
@@ -714,24 +718,38 @@ export const products: Product[] = [
   },
 
 
+
+  
   {
-  id: "interior-l001",
-  name: "Interior Acrylic Sheet - Clear",
-  code: "L-001",
-  category: "interior",
-  mainCategory: "interior",
-  price: 2200,
-  inStock: true,
-  description: "Clear acrylic sheet for interior applications with excellent transparency and smooth finish.",
-  thicknessRange: "1.7 mm – 9.7 mm",
-  sizes: [
-    { id: "interior-l001-1220x2440", name: "1220 x 2440 mm", price: 2200, inStock: true, stockCount: 25 }
-  ],
-  features: ["High transparency", "Durable and lightweight", "Smooth surface finish"],
-  application: "Ideal for decorative interior designs, furniture, and lighting applications.",
-  images: ["/img-1.png", "/img-2.png"],
-  attributes: {
-    lightTransmission: "90%"
-  }
-}
+    id: "interior-l001",
+    name: "Interior Acrylic Sheet - Clear",
+    code: "L-001",
+    category: "interior",
+    mainCategory: "interior",
+    price: 2200,
+    inStock: true,
+    description:
+      "Clear acrylic sheet for interior applications with excellent transparency and smooth finish.",
+    thicknessRange: "1.7 mm – 9.7 mm",
+    sizes: [
+      {
+        id: "interior-l001-1220x2440",
+        name: "1220 x 2440 mm",
+        price: 2200,
+        inStock: true,
+        stockCount: 25,
+      },
+    ],
+    features: [
+      "High transparency",
+      "Durable and lightweight",
+      "Smooth surface finish",
+    ],
+    application:
+      "Ideal for decorative interior designs, furniture, and lighting applications.",
+    images: ["/img-1.png", "/img-2.png"],
+    attributes: {
+      lightTransmission: "90%",
+    },
+  },
 ];

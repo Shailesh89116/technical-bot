@@ -48,8 +48,9 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="mb-1 text-base font-medium md:text-lg">Phone</h3>
-                    <p className="text-sm text-gray-600 md:text-base">+91 983-399-5543</p>
-                    <p className="text-xs text-gray-600 md:text-sm">Monday - Friday, 9am - 5pm IST</p>
+                    <p className="text-sm text-gray-600 md:text-base">+91 9594084630</p>
+                    <p className="text-sm text-gray-600 md:text-base">+91 9594084626</p>
+                    <p className="text-xs text-gray-600 md:text-sm">Monday - Saturday, 9:30am - 6pm IST</p>
                   </div>
                 </div>
 

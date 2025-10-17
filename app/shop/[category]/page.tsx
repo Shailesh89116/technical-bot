@@ -1,5 +1,5 @@
 import CategoryPage from "@/components/shop/category-grid";
-import { products } from "@/dummy-data/products";
+import prismadb from "@/lib/prismadb";
 import { Suspense } from "react";
 
 const ShopPage = async ({
@@ -9,8 +9,33 @@ const ShopPage = async ({
 }) => {
   const category = (await params).category;
 
-  const productList = products.filter(
-    (product) => category.toLowerCase() === product.mainCategory?.toLowerCase())
+  const categoryExists = await prismadb.category.findUnique({
+    where: {
+      catCode: category,
+    },
+  });
+
+  const productList = await prismadb.product.findMany({
+    where: {
+      categoryId: categoryExists?.id,
+    },
+    include: {
+      category: {
+        select: {
+          name: true,
+        },
+      },
+      series: {
+        select: {
+          name: true,
+        },
+      },
+      sizes: true,
+      attributes: true,
+      images: true,
+      variants: true,
+    },
+  });
 
   return (
     <Suspense
