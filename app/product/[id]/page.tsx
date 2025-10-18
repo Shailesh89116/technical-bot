@@ -1,6 +1,8 @@
 import ProductDetails from "@/components/product/product-details";
 import prismadb from "@/lib/prismadb";
 
+export const dynamic = "force-dynamic";
+
 const ProductDetailsPage = async ({
   params,
 }: {

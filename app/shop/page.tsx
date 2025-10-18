@@ -2,6 +2,8 @@ import CategoryPage from "@/components/shop/all-product";
 import prismadb from "@/lib/prismadb";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 const ShopPage = async () => {
   const products = await prismadb.product.findMany({
     include: {

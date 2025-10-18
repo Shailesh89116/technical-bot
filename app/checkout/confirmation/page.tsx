@@ -86,7 +86,7 @@ export default function OrderConfirmationPage() {
   }
 
   return (
-    <div className="px-8 py-8 md:py-12">
+    <div className="px-8 py-8 md:py-12 mt-5">
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 flex flex-col items-center text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
@@ -98,7 +98,7 @@ export default function OrderConfirmationPage() {
           </p>
         </div>
 
-        <Card className="mb-8">
+        {/* <Card className="mb-8">
           <CardContent className="p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
@@ -228,7 +228,7 @@ export default function OrderConfirmationPage() {
               </Button>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

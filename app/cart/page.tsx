@@ -9,10 +9,7 @@ import {
   Plus,
   X,
   ArrowLeft,
-  ShieldCheck,
-  Truck,
   Award,
-  Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,10 +29,9 @@ export default function CartPage() {
     0
   );
   const promoDiscount = appliedPromo === "SAVE10" ? subtotal * 0.1 : 0;
-  const shipping = subtotal > 5000 ? 0 : 200;
   const taxRate = 0.18; // GST in India
   const tax = (subtotal - promoDiscount) * taxRate;
-  const total = subtotal - promoDiscount + shipping + tax;
+  const total = subtotal - promoDiscount + tax;
 
   useEffect(() => {
     fetchCart();
@@ -145,7 +141,7 @@ export default function CartPage() {
             <p className="mb-8 text-gray-600 max-w-md mx-auto">
               Discover our premium acrylic sheets for your construction and
               design projects.
-            </p>  
+            </p>
             <Button
               asChild
               className="rounded-full bg-black px-8 py-3 hover:bg-gray-800"
@@ -202,8 +198,8 @@ export default function CartPage() {
                                     item.category
                                   )}`}
                                 >
-                                  {item.category.charAt(0).toUpperCase() +
-                                    item.category.slice(1)}
+                                  {item?.category?.charAt(0).toUpperCase() +
+                                    item?.category?.slice(1)}
                                 </Badge>
                               </div>
                               <p className="text-sm text-gray-600 mb-1">
@@ -214,7 +210,7 @@ export default function CartPage() {
                               </p>
 
                               <div className="flex flex-wrap gap-2 mb-3">
-                                {item.attributes.map((attr) => (
+                                {item?.attributes?.map((attr) => (
                                   <Badge
                                     key={attr.id}
                                     variant="outline"
@@ -227,7 +223,7 @@ export default function CartPage() {
                             </div>
                             <div className="text-right">
                               <p className="text-lg font-semibold text-gray-900">
-                                ₹{item.currentPrice.toLocaleString()}
+                                ₹{item?.currentPrice?.toLocaleString()}
                               </p>
                               <p className="text-sm text-gray-500">per sheet</p>
                             </div>
@@ -362,17 +358,6 @@ export default function CartPage() {
                     )}
 
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Shipping</span>
-                      <span className="font-medium text-gray-900">
-                        {shipping === 0 ? (
-                          <span className="text-green-600">Free</span>
-                        ) : (
-                          `₹${shipping.toLocaleString()}`
-                        )}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between text-sm">
                       <span className="text-gray-600">
                         GST ({(taxRate * 100).toFixed(0)}%)
                       </span>
@@ -397,46 +382,9 @@ export default function CartPage() {
                   >
                     <Link href="/checkout">Proceed to Checkout</Link>
                   </Button>
-
-                  {shipping === 0 && (
-                    <div className="mt-4 flex items-center text-sm text-green-600">
-                      <Truck className="mr-2 h-4 w-4" />
-                      Free shipping on orders over ₹5,000
-                    </div>
-                  )}
                 </div>
 
-                <div className="space-y-4">
-                  <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                    <div className="flex items-start gap-3">
-                      <ShieldCheck className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div>
-                        <h3 className="font-semibold text-gray-900">
-                          Secure Checkout
-                        </h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Your payment information is protected with 256-bit SSL
-                          encryption.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                    <div className="flex items-start gap-3">
-                      <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
-                      <div>
-                        <h3 className="font-semibold text-gray-900">
-                          Fast Delivery
-                        </h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          Most orders ship within 2-3 business days across
-                          India.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

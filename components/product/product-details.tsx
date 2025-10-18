@@ -81,12 +81,11 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
       currentPrice: currentPrice || 0,
       quantity,
       code: product.code || "",
-      specs: `Thickness: ${
-        product.thickness || product.thicknessRange || "Standard"
-      }, Span: ${product.span || "Custom"}`,
+      specs: `Thickness: ${product.thickness || product.thicknessRange || "Standard"}, Span: ${product.span || "Custom"}`,
       attributes: product.attributes,
-      category : product.series?.name || product.category?.name || "",
+      category: product.series?.name || product.category?.name || "",
       image: product.images[0]?.url || "",
+      id: crypto.randomUUID()
     });
     setIsCartLoading(false);
     toast({
@@ -105,12 +104,11 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
       currentPrice: currentPrice || 0,
       quantity,
       code: product.code || "",
-      specs: `Thickness: ${
-        product.thickness || product.thicknessRange || "Standard"
-      }, Span: ${product.span || "Custom"}`,
+      specs: `Thickness: ${product.thickness || product.thicknessRange || "Standard"}, Span: ${product.span || "Custom"}`,
       attributes: product.attributes,
-      category : product.series?.name || product.category?.name || "",
+      category: product.series?.name || product.category?.name || "",
       image: product.images[0]?.url || "",
+      id: crypto.randomUUID()
     });
     setIsLoading(false);
   }, [addToCartAndCheckout, currentPrice, product.attributes, product.basePrice, product.category?.name, product.code, product.id, product.images, product.name, product.series?.name, product.span, product.thickness, product.thicknessRange, quantity, selectedSize]);

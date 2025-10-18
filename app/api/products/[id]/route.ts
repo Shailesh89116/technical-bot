@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const data = await req.json();
 
     const updated = await prismadb.product.update({
@@ -35,10 +35,10 @@ export async function PATCH(
 
 export async function DELETE(
   _: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     await prismadb.product.delete({ where: { id } });
     return NextResponse.json({ success: true, message: "Product deleted" });
   } catch (err: any) {

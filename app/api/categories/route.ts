@@ -2,9 +2,9 @@ import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const { name, description, hasSeries } = await req.json();
+  const { name, description, hasSeries, catCode } = await req.json();
   const category = await prismadb.category.create({
-    data: { name, description, hasSeries },
+    data: { name, description, hasSeries, catCode },
   });
   return NextResponse.json(category);
 }

@@ -1,27 +1,25 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Separator } from "@/components/ui/separator"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle2, CreditCard, ArrowLeft, ShieldCheck, Loader2, Lock, Truck, Package } from "lucide-react"
+import { CheckCircle2, ArrowLeft, ShieldCheck, Loader2, Lock, Package } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { CartItem } from "@/types/cart"
 
 export default function CheckoutPage() {
   const router = useRouter()
   const { toast } = useToast()
+    const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [step, setStep] = useState(1)
-  const [shippingMethod, setShippingMethod] = useState("standard")
-  const [paymentMethod, setPaymentMethod] = useState("upi")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [formErrors, setFormErrors] = useState<Record<string, string | null>>({})
 
@@ -46,36 +44,30 @@ export default function CheckoutPage() {
     gstNumber: "",
   })
 
-  // Cart items - using real product data
-  const cartItems = [
-    {
-      id: "grand-001",
-      name: "Grand Series Clear Acrylic Sheet",
-      image: "/img-1.png",
-      specs: "5mm thickness, 1230×2450mm, UV Cut 99%",
-      price: 4200,
-      quantity: 2,
-    },
-    {
-      id: "prime-001",
-      name: "Prime Series Frosted Acrylic Sheet",
-      image: "/img-2.png",
-      specs: "3mm thickness, 1230×2450mm, Heat Cut 85%",
-      price: 2800,
-      quantity: 1,
-    },
-  ]
+    useEffect(() => {
+      fetchCart();
+    }, []);
+  
+    const fetchCart = async () => {
+      // setIsLoading(true);
+      try {
+        const response = await fetch("/api/cart");
+        const data = await response.json();
+        setCartItems(data.items);
+      } catch (error) {
+        console.error("Failed to fetch cart:", error);
+      } finally {
+        // setIsLoading(false);
+      }
+    };
 
-  const subtotal = cartItems.reduce((total, item) => total + item.price * item.quantity, 0)
-  const shipping = shippingMethod === "express" ? 500 : subtotal > 10000 ? 0 : 350
+  const subtotal = cartItems.reduce((total, item) => total + item.currentPrice * item.quantity, 0)
   const gst = subtotal * 0.18 // 18% GST
-  const total = subtotal + shipping + gst
+  const total = subtotal + gst
 
   const steps = [
     { number: 1, title: "Shipping", icon: Package },
-    { number: 2, title: "Delivery", icon: Truck },
-    { number: 3, title: "Payment", icon: CreditCard },
-    { number: 4, title: "Review", icon: CheckCircle2 },
+    { number: 2, title: "Review", icon: CheckCircle2 },
   ]
 
   const handleInputChange = (e: any) => {
@@ -86,30 +78,7 @@ export default function CheckoutPage() {
     }
   }
 
-  const nextStep = () => {
-    if (step === 1) {
-      const errors = validateShippingInfo()
-      if (Object.keys(errors).length > 0) {
-        setFormErrors(errors)
-        return
-      }
-    } else if (step === 3 && paymentMethod === "credit-card") {
-      const errors = validatePaymentInfo()
-      if (Object.keys(errors).length > 0) {
-        setFormErrors(errors)
-        return
-      }
-    }
-    setStep(step + 1)
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
-  const prevStep = () => {
-    setStep(step - 1)
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
-  const validateShippingInfo = () => {
+    const validateShippingInfo = () => {
     const errors: Record<string, string> = {}
 
     if (!formData.firstName.trim()) {
@@ -149,41 +118,66 @@ export default function CheckoutPage() {
     return errors
   }
 
-  const validatePaymentInfo = () => {
-    const errors: Record<string, string> = {}
-
-    if (paymentMethod === "credit-card") {
-      if (!formData.cardNumber) {
-        errors.cardNumber = "Card number is required"
-      } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ""))) {
-        errors.cardNumber = "Please enter a valid 16-digit card number"
+  const nextStep = () => {
+    if (step === 1) {
+      const errors = validateShippingInfo()
+      if (Object.keys(errors).length > 0) {
+        setFormErrors(errors)
+        return
       }
-
-      if (!formData.cardExpiry) {
-        errors.cardExpiry = "Expiry date is required"
-      } else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(formData.cardExpiry)) {
-        errors.cardExpiry = "Please use MM/YY format"
-      }
-
-      if (!formData.cardCvc) {
-        errors.cardCvc = "CVC is required"
-      } else if (!/^\d{3,4}$/.test(formData.cardCvc)) {
-        errors.cardCvc = "Please enter a valid CVC"
-      }
-
-      if (!formData.nameOnCard) {
-        errors.nameOnCard = "Name on card is required"
-      }
-    } else if (paymentMethod === "upi") {
-      if (!formData.upiId) {
-        errors.upiId = "UPI ID is required"
-      } else if (!/^[\w.-]+@[\w.-]+$/.test(formData.upiId)) {
-        errors.upiId = "Please enter a valid UPI ID"
-      }
+    // } else if (step === 3 && paymentMethod === "credit-card") {
+    //   const errors = validatePaymentInfo()
+    //   if (Object.keys(errors).length > 0) {
+    //     setFormErrors(errors)
+    //     return
+    //   }
     }
-
-    return errors
+    setStep(step + 1)
+    window.scrollTo({ top: 0, behavior: "smooth" })
   }
+
+  const prevStep = () => {
+    setStep(step - 1)
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
+
+
+  // const validatePaymentInfo = () => {
+  //   const errors: Record<string, string> = {}
+
+  //   if (paymentMethod === "credit-card") {
+  //     if (!formData.cardNumber) {
+  //       errors.cardNumber = "Card number is required"
+  //     } else if (!/^\d{16}$/.test(formData.cardNumber.replace(/\s/g, ""))) {
+  //       errors.cardNumber = "Please enter a valid 16-digit card number"
+  //     }
+
+  //     if (!formData.cardExpiry) {
+  //       errors.cardExpiry = "Expiry date is required"
+  //     } else if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(formData.cardExpiry)) {
+  //       errors.cardExpiry = "Please use MM/YY format"
+  //     }
+
+  //     if (!formData.cardCvc) {
+  //       errors.cardCvc = "CVC is required"
+  //     } else if (!/^\d{3,4}$/.test(formData.cardCvc)) {
+  //       errors.cardCvc = "Please enter a valid CVC"
+  //     }
+
+  //     if (!formData.nameOnCard) {
+  //       errors.nameOnCard = "Name on card is required"
+  //     }
+  //   } else if (paymentMethod === "upi") {
+  //     if (!formData.upiId) {
+  //       errors.upiId = "UPI ID is required"
+  //     } else if (!/^[\w.-]+@[\w.-]+$/.test(formData.upiId)) {
+  //       errors.upiId = "Please enter a valid UPI ID"
+  //     }
+  //   }
+
+  //   return errors
+  // }
 
   const handlePlaceOrder = async () => {
     try {
@@ -204,13 +198,8 @@ export default function CheckoutPage() {
           state: formData.state,
           pincode: formData.pincode,
           country: formData.country,
-          method: shippingMethod,
-          cost: shipping,
-        },
-        payment: {
-          method: paymentMethod,
-          lastFour: paymentMethod === "credit-card" ? formData.cardNumber.slice(-4) : null,
-          upiId: paymentMethod === "upi" ? formData.upiId : null,
+          // method: shippingMethod,
+          // cost: shipping,
         },
         items: cartItems,
         subtotal,
@@ -485,279 +474,17 @@ export default function CheckoutPage() {
                       </Link>
                     </Button>
                     <Button onClick={nextStep} className="rounded-full bg-black px-6 hover:bg-gray-800 sm:px-8">
-                      Continue to Delivery
+                      Continue to Review
                     </Button>
                   </div>
                 </div>
               )}
 
               {/* Step 2: Delivery */}
-              {step === 2 && (
-                <div className="p-6 sm:p-8">
-                  <div className="mb-6 sm:mb-8">
-                    <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">Delivery Options</h2>
-                    <p className="mt-1 text-gray-600">Choose your preferred delivery method</p>
-                  </div>
 
-                  <RadioGroup value={shippingMethod} onValueChange={setShippingMethod} className="space-y-4">
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
-                      <RadioGroupItem value="standard" id="standard" className="sr-only" />
-                      <Label htmlFor="standard" className="cursor-pointer">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start space-x-3 sm:space-x-4">
-                            <div className="rounded-full bg-gray-100 p-2">
-                              <Package className="h-4 w-4 text-gray-600 sm:h-5 sm:w-5" />
-                            </div>
-                            <div>
-                              <h3 className="text-base font-medium text-gray-900 sm:text-lg">Standard Delivery</h3>
-                              <p className="text-sm text-gray-600 sm:text-base">Delivery in 5-7 business days</p>
-                              <p className="mt-1 text-xs text-gray-500 sm:text-sm">
-                                Perfect for non-urgent orders. Includes tracking and insurance.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-base font-semibold text-gray-900 sm:text-lg">
-                              {subtotal > 10000 ? "Free" : "₹350"}
-                            </p>
-                            {subtotal > 10000 && (
-                              <p className="text-xs text-green-600 sm:text-sm">Free delivery applied</p>
-                            )}
-                          </div>
-                        </div>
-                      </Label>
-                    </div>
-
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
-                      <RadioGroupItem value="express" id="express" className="sr-only" />
-                      <Label htmlFor="express" className="cursor-pointer">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start space-x-3 sm:space-x-4">
-                            <div className="rounded-full bg-blue-100 p-2">
-                              <Truck className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5" />
-                            </div>
-                            <div>
-                              <h3 className="text-base font-medium text-gray-900 sm:text-lg">Express Delivery</h3>
-                              <p className="text-sm text-gray-600 sm:text-base">Delivery in 2-3 business days</p>
-                              <p className="mt-1 text-xs text-gray-500 sm:text-sm">
-                                Faster delivery with priority handling and tracking.
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-base font-semibold text-gray-900 sm:text-lg">₹500</p>
-                          </div>
-                        </div>
-                      </Label>
-                    </div>
-                  </RadioGroup>
-
-                  <div className="mt-6 flex flex-col gap-4 border-t border-gray-100 pt-6 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
-                    <Button variant="ghost" onClick={prevStep} className="rounded-full">
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Back to Shipping
-                    </Button>
-                    <Button onClick={nextStep} className="rounded-full bg-black px-6 hover:bg-gray-800 sm:px-8">
-                      Continue to Payment
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 3: Payment */}
-              {step === 3 && (
-                <div className="p-6 sm:p-8">
-                  <div className="mb-6 sm:mb-8">
-                    <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">Payment Information</h2>
-                    <p className="mt-1 text-gray-600">Choose your payment method</p>
-                  </div>
-
-                  <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod} className="space-y-4">
-                    {/* UPI Payment */}
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
-                      <RadioGroupItem value="upi" id="upi" className="sr-only" />
-                      <Label htmlFor="upi" className="cursor-pointer">
-                        <div className="flex items-start space-x-3 sm:space-x-4">
-                          <div className="rounded-full bg-orange-100 p-2">
-                            <div className="h-4 w-4 rounded bg-orange-600 sm:h-5 sm:w-5"></div>
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-base font-medium text-gray-900 sm:text-lg">UPI Payment</h3>
-                            <p className="text-sm text-gray-600 sm:text-base">
-                              Pay using Google Pay, PhonePe, Paytm, or any UPI app
-                            </p>
-                          </div>
-                        </div>
-                      </Label>
-
-                      {paymentMethod === "upi" && (
-                        <div className="mt-4 space-y-4 border-t border-gray-100 pt-4 sm:mt-6 sm:pt-6">
-                          <div className="space-y-2">
-                            <Label htmlFor="upiId" className="text-sm font-medium text-gray-900">
-                              UPI ID *
-                            </Label>
-                            <Input
-                              id="upiId"
-                              placeholder="yourname@paytm"
-                              value={formData.upiId}
-                              onChange={handleInputChange}
-                              className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
-                                formErrors.upiId ? "border-red-500" : ""
-                              }`}
-                            />
-                            {formErrors.upiId && <p className="text-sm text-red-600">{formErrors.upiId}</p>}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Credit/Debit Card */}
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
-                      <RadioGroupItem value="credit-card" id="credit-card" className="sr-only" />
-                      <Label htmlFor="credit-card" className="cursor-pointer">
-                        <div className="flex items-start space-x-3 sm:space-x-4">
-                          <div className="rounded-full bg-gray-100 p-2">
-                            <CreditCard className="h-4 w-4 text-gray-600 sm:h-5 sm:w-5" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-base font-medium text-gray-900 sm:text-lg">Credit or Debit Card</h3>
-                            <p className="text-sm text-gray-600 sm:text-base">
-                              Visa, Mastercard, RuPay, American Express
-                            </p>
-                          </div>
-                        </div>
-                      </Label>
-
-                      {paymentMethod === "credit-card" && (
-                        <div className="mt-4 space-y-4 border-t border-gray-100 pt-4 sm:mt-6 sm:pt-6">
-                          <div className="space-y-2">
-                            <Label htmlFor="cardNumber" className="text-sm font-medium text-gray-900">
-                              Card Number *
-                            </Label>
-                            <Input
-                              id="cardNumber"
-                              placeholder="1234 5678 9012 3456"
-                              value={formData.cardNumber}
-                              onChange={handleInputChange}
-                              className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
-                                formErrors.cardNumber ? "border-red-500" : ""
-                              }`}
-                            />
-                            {formErrors.cardNumber && <p className="text-sm text-red-600">{formErrors.cardNumber}</p>}
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="cardExpiry" className="text-sm font-medium text-gray-900">
-                                Expiry Date *
-                              </Label>
-                              <Input
-                                id="cardExpiry"
-                                placeholder="MM/YY"
-                                value={formData.cardExpiry}
-                                onChange={handleInputChange}
-                                className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
-                                  formErrors.cardExpiry ? "border-red-500" : ""
-                                }`}
-                              />
-                              {formErrors.cardExpiry && <p className="text-sm text-red-600">{formErrors.cardExpiry}</p>}
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="cardCvc" className="text-sm font-medium text-gray-900">
-                                CVV *
-                              </Label>
-                              <Input
-                                id="cardCvc"
-                                placeholder="123"
-                                value={formData.cardCvc}
-                                onChange={handleInputChange}
-                                className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
-                                  formErrors.cardCvc ? "border-red-500" : ""
-                                }`}
-                              />
-                              {formErrors.cardCvc && <p className="text-sm text-red-600">{formErrors.cardCvc}</p>}
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label htmlFor="nameOnCard" className="text-sm font-medium text-gray-900">
-                              Name on Card *
-                            </Label>
-                            <Input
-                              id="nameOnCard"
-                              placeholder="Rajesh Kumar"
-                              value={formData.nameOnCard}
-                              onChange={handleInputChange}
-                              className={`rounded-xl border-gray-200 focus:border-black focus:ring-black ${
-                                formErrors.nameOnCard ? "border-red-500" : ""
-                              }`}
-                            />
-                            {formErrors.nameOnCard && <p className="text-sm text-red-600">{formErrors.nameOnCard}</p>}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Net Banking */}
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
-                      <RadioGroupItem value="netbanking" id="netbanking" className="sr-only" />
-                      <Label htmlFor="netbanking" className="cursor-pointer">
-                        <div className="flex items-start space-x-3 sm:space-x-4">
-                          <div className="rounded-full bg-green-100 p-2">
-                            <div className="h-4 w-4 rounded bg-green-600 sm:h-5 sm:w-5"></div>
-                          </div>
-                          <div>
-                            <h3 className="text-base font-medium text-gray-900 sm:text-lg">Net Banking</h3>
-                            <p className="text-sm text-gray-600 sm:text-base">Pay directly from your bank account</p>
-                          </div>
-                        </div>
-                      </Label>
-                    </div>
-
-                    {/* Cash on Delivery */}
-                    <div className="relative rounded-2xl border-2 border-gray-200 p-4 transition-all hover:border-gray-300 data-[state=checked]:border-black data-[state=checked]:bg-gray-50 sm:p-6">
-                      <RadioGroupItem value="cod" id="cod" className="sr-only" />
-                      <Label htmlFor="cod" className="cursor-pointer">
-                        <div className="flex items-start space-x-3 sm:space-x-4">
-                          <div className="rounded-full bg-yellow-100 p-2">
-                            <div className="h-4 w-4 rounded bg-yellow-600 sm:h-5 sm:w-5"></div>
-                          </div>
-                          <div>
-                            <h3 className="text-base font-medium text-gray-900 sm:text-lg">Cash on Delivery</h3>
-                            <p className="text-sm text-gray-600 sm:text-base">Pay when your order is delivered</p>
-                            <p className="mt-1 text-xs text-gray-500 sm:text-sm">Additional ₹50 COD charges apply</p>
-                          </div>
-                        </div>
-                      </Label>
-                    </div>
-                  </RadioGroup>
-
-                  <div className="mt-6 rounded-2xl bg-green-50 p-4">
-                    <div className="flex items-center space-x-3">
-                      <ShieldCheck className="h-5 w-5 text-green-600" />
-                      <div>
-                        <p className="text-sm font-medium text-green-800">Your payment is secure</p>
-                        <p className="text-sm text-green-700">
-                          We use SSL encryption and never store your payment information
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex flex-col gap-4 border-t border-gray-100 pt-6 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
-                    <Button variant="ghost" onClick={prevStep} className="rounded-full">
-                      <ArrowLeft className="mr-2 h-4 w-4" />
-                      Back to Delivery
-                    </Button>
-                    <Button onClick={nextStep} className="rounded-full bg-black px-6 hover:bg-gray-800 sm:px-8">
-                      Review Order
-                    </Button>
-                  </div>
-                </div>
-              )}
 
               {/* Step 4: Review - keeping existing code with currency updates */}
-              {step === 4 && (
+              {step === 2 && (
                 <div className="p-6 sm:p-8">
                   <div className="mb-6 sm:mb-8">
                     <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">Review Your Order</h2>
@@ -784,7 +511,7 @@ export default function CheckoutPage() {
                     </div>
 
                     {/* Shipping Method */}
-                    <div className="rounded-2xl border border-gray-200 p-4 sm:p-6">
+                    {/* <div className="rounded-2xl border border-gray-200 p-4 sm:p-6">
                       <h3 className="mb-4 text-base font-medium text-gray-900 sm:text-lg">Delivery Method</h3>
                       <div className="flex items-center justify-between">
                         <div>
@@ -797,10 +524,10 @@ export default function CheckoutPage() {
                         </div>
                         <p className="font-medium text-gray-900">{shipping === 0 ? "Free" : `₹${shipping}`}</p>
                       </div>
-                    </div>
+                    </div> */}
 
                     {/* Payment Method */}
-                    <div className="rounded-2xl border border-gray-200 p-4 sm:p-6">
+                    {/* <div className="rounded-2xl border border-gray-200 p-4 sm:p-6">
                       <h3 className="mb-4 text-base font-medium text-gray-900 sm:text-lg">Payment Method</h3>
                       <div className="flex items-center space-x-3">
                         <CreditCard className="h-5 w-5 text-gray-600" />
@@ -822,13 +549,13 @@ export default function CheckoutPage() {
                           )}
                         </div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div className="mt-6 flex flex-col gap-4 border-t border-gray-100 pt-6 sm:mt-8 sm:flex-row sm:items-center sm:justify-between sm:pt-8">
                     <Button variant="ghost" onClick={prevStep} className="rounded-full">
                       <ArrowLeft className="mr-2 h-4 w-4" />
-                      Back to Payment
+                      Back to Shipping Address
                     </Button>
                     <Button
                       onClick={handlePlaceOrder}
@@ -863,16 +590,16 @@ export default function CheckoutPage() {
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex space-x-3 sm:space-x-4">
                     <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-xl bg-gray-100 sm:h-16 sm:w-16">
-                      <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                      <Image src={item.image || "/placeholder.svg"} alt={item.productName} fill className="object-cover" />
                       <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-900 text-xs font-medium text-white sm:-right-2 sm:-top-2 sm:h-6 sm:w-6">
                         {item.quantity}
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-sm font-medium text-gray-900 sm:text-base">{item.name}</h3>
+                      <h3 className="text-sm font-medium text-gray-900 sm:text-base">{item.productName}</h3>
                       <p className="text-xs text-gray-600 sm:text-sm">{item.specs}</p>
                       <p className="mt-1 text-sm font-medium text-gray-900 sm:text-base">
-                        ₹{(item.price * item.quantity).toLocaleString()}
+                        ₹{(item.currentPrice * item.quantity).toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -887,24 +614,24 @@ export default function CheckoutPage() {
                   <span>Subtotal</span>
                   <span>₹{subtotal.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-700 sm:text-base">
+                {/* <div className="flex justify-between text-sm text-gray-700 sm:text-base">
                   <span>Delivery</span>
                   <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
-                </div>
+                </div> */}
                 <div className="flex justify-between text-sm text-gray-700 sm:text-base">
                   <span>GST (18%)</span>
                   <span>₹{gst.toLocaleString()}</span>
                 </div>
-                {paymentMethod === "cod" && (
+                {/* {paymentMethod === "cod" && (
                   <div className="flex justify-between text-sm text-gray-700 sm:text-base">
                     <span>COD Charges</span>
                     <span>₹50</span>
                   </div>
-                )}
+                )} */}
                 <Separator className="my-3 sm:my-4" />
                 <div className="flex justify-between text-lg font-semibold text-gray-900 sm:text-xl">
                   <span>Total</span>
-                  <span>₹{(total + (paymentMethod === "cod" ? 50 : 0)).toLocaleString()}</span>
+                  <span>₹{(total).toLocaleString()}</span>
                 </div>
               </div>
 

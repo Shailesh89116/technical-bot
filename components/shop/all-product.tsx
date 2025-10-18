@@ -447,7 +447,7 @@ export default function ProductsPage({products}: ProductsPageProps) {
                         </span>
                       </div>
                   <h3 className="font-semibold text-gray-900 group-hover:text-gray-700 transition-colors">
-                    {product.name}
+                    {product.name} {product.code ? `(${product.code})` : ""}
                   </h3>
                   <p className="text-sm text-gray-600 mt-1 line-clamp-2">{product.description}</p>
 

@@ -1,110 +1,121 @@
-'use client'
+"use client";
 
-import { CartItem } from '@/types/cart'
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import { CartItem } from "@/types/cart";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 type CartContextType = {
-  items: CartItem[]
-  addToCart: (item: CartItem) => Promise<void>
+  items: CartItem[];
+  addToCart: (item: CartItem) => Promise<void>;
   addToCartAndCheckout: (item: CartItem) => Promise<void>;
-  removeFromCart: (id: string) => Promise<void>
-  clearCart: () => Promise<void>
-  isLoading: boolean
-}
+  removeFromCart: (id: string) => Promise<void>;
+  clearCart: () => Promise<void>;
+  isLoading: boolean;
+};
 
-const CartContext = createContext<CartContextType | undefined>(undefined)
+const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<CartItem[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchCart()
-  }, [])
+    fetchCart();
+  }, []);
 
   const fetchCart = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/cart')
-      const data = await response.json()
-      setItems(data.items)
+      const response = await fetch("/api/cart");
+      const data = await response.json();
+      setItems(data.items);
     } catch (error) {
-      console.error('Failed to fetch cart:', error)
+      console.error("Failed to fetch cart:", error);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   const addToCart = async (newItem: CartItem) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ item: {id :crypto.randomUUID() ,...newItem}, action: 'add' }),
-      })
-      const data = await response.json()
-      setItems(data.items)
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item: newItem, action: "add" }),
+      });
+      const data = await response.json();
+      setItems(data.items);
     } catch (error) {
-      console.error('Failed to add item to cart:', error)
+      console.error("Failed to add item to cart:", error);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   const addToCartAndCheckout = async (newItem: CartItem) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ item: newItem, action: 'addAndCheckout' }),
-      })
-      const data = await response.json()
-      setItems(data.items)
-      window.location.href = '/checkout'
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ item: newItem, action: "addAndCheckout" }),
+      });
+      const data = await response.json();
+      setItems(data.items);
+      window.location.href = "/checkout";
     } catch (error) {
-      console.error('Failed to add item to cart and checkout:', error)
+      console.error("Failed to add item to cart and checkout:", error);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   const removeFromCart = async (id: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/cart', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/cart", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
-      })
-      const data = await response.json()
-      setItems(data.items)
+      });
+      const data = await response.json();
+      setItems(data.items);
     } catch (error) {
-      console.error('Failed to remove item from cart:', error)
+      console.error("Failed to remove item from cart:", error);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   const clearCart = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await fetch('/api/cart', { method: 'DELETE' })
-      setItems([])
+      await fetch("/api/cart", { method: "DELETE" });
+      setItems([]);
     } catch (error) {
-      console.error('Failed to clear cart:', error)
+      console.error("Failed to clear cart:", error);
     }
-    setIsLoading(false)
-  }
+    setIsLoading(false);
+  };
 
   return (
-    <CartContext.Provider value={{ items, addToCart, addToCartAndCheckout, removeFromCart, clearCart, isLoading }}>
+    <CartContext.Provider
+      value={{
+        items,
+        addToCart,
+        addToCartAndCheckout,
+        removeFromCart,
+        clearCart,
+        isLoading,
+      }}
+    >
       {children}
     </CartContext.Provider>
-  )
-}
+  );
+};
 
 export const useCart = () => {
-  const context = useContext(CartContext)
+  const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider')
+    throw new Error("useCart must be used within a CartProvider");
   }
-  return context
-}
+  return context;
+};

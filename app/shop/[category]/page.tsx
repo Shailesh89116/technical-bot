@@ -2,6 +2,8 @@ import CategoryPage from "@/components/shop/category-grid";
 import prismadb from "@/lib/prismadb";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 const ShopPage = async ({
   params,
 }: {
