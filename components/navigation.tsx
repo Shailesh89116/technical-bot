@@ -110,73 +110,18 @@ export function Navigation() {
             {/* Desktop Navigation with Shop Dropdown */}
             <NavigationMenu className="hidden md:flex">
               <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger
-                    className={`${
-                      isDarkHeader
-                        ? "bg-transparent text-white/80 hover:text-gray-900 hover:bg-gray-100"
-                        : "bg-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-100 "
-                    }`}
-                  >
-                    Shop
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px]">
-                      <li className="">
-                        <Link
-                          href="/shop/building-materials"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">
-                            Acrylic for Building Material
-                          </div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            High-clarity acrylic with 92% light transmission,
-                            UV-stabilized for outdoor use
-                          </p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/shop/sanitary"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">
-                            Acrylic for Sanitary
-                          </div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Perfect for crafts and small displays
-                          </p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/shop/interior"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">
-                            Acrylic for Interior
-                          </div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            For heavy-duty applications and furniture
-                          </p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="/shop/advertise"
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                        >
-                          <div className="text-sm font-medium leading-none">
-                            Acrylic for Advertise
-                          </div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Ideal for signage and displays
-                          </p>
-                        </Link>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
+              <NavigationMenuItem>
+                  <Link href="/shop" passHref>
+                    <NavigationMenuLink
+                      className={`${navigationMenuTriggerStyle()} ${
+                        isDarkHeader
+                          ? "bg-transparent text-white/80 hover:text-white hover:bg-white/10"
+                          : "bg-transparent text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+                      }`}
+                    >
+                      Shop
+                    </NavigationMenuLink>
+                  </Link>
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
