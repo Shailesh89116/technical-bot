@@ -25,16 +25,32 @@ const ProductDetailsPage = async ({
           name: true,
         },
       },
-      sizes: true,
+      sizes: {
+        include:{
+          prices :{
+            take : 1,
+            orderBy:{
+              createdAt : "desc"
+            }
+          }
+        }
+      },
       attributes: true,
       images: true,
       variants: true,
+      featuregroup : {
+        include:{
+          features : true
+        }
+      }
     },
   });
 
   if (!productData) {
     return <div>Product not found</div>;
   }
+
+  console.log(productData);
 
   return <ProductDetails product={productData} />;
 };

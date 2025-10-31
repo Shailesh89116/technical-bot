@@ -21,7 +21,7 @@ const ShopPage = async ({
     where: {
       categoryId: categoryExists?.id,
     },
-    include: {
+     include: {
       category: {
         select: {
           name: true,
@@ -32,12 +32,37 @@ const ShopPage = async ({
           name: true,
         },
       },
-      sizes: true,
+      featuregroup: {
+        include: {
+          features: true,
+        },
+      },
+      sizes: {
+        include:{
+          prices:true
+        }
+      },
       attributes: true,
       images: true,
       variants: true,
     },
   });
+
+
+  if (!productList.length) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white pt-20">
+ 
+        <h2 className="text-3xl font-semibold text-gray-700 mb-2">
+          Products Coming Soon 🚀
+        </h2>
+        <p className="text-gray-500 text-center max-w-md">
+          We’re working hard to bring {categoryExists?.name} products online.  
+          Stay tuned — they’ll be available here shortly!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <Suspense

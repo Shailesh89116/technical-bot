@@ -56,16 +56,17 @@ model Series {
 
 // ================= PRODUCT =================
 model Product {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  id             String         @id @default(auto()) @map("_id") @db.ObjectId
   name           String
   code           String?
   description    String?
   thickness      String?
   thicknessRange String?
   span           String?
-  inStock        Boolean       @default(true)
+  inStock        Boolean        @default(true)
   basePrice      Float?
   features       String[]
+  featuregroup   FeatureGroup[]
   application    String?
   images         Image[]
   sizes          ProductSize[]
@@ -74,14 +75,31 @@ model Product {
   maxCustomSize  Json?
   seriesId       String?        @db.ObjectId
   series         Series?        @relation(fields: [seriesId], references: [id])
-  categoryId     String?       @db.ObjectId
-  category       Category?     @relation(fields: [categoryId], references: [id])
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  categoryId     String?        @db.ObjectId
+  category       Category?      @relation(fields: [categoryId], references: [id])
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   OrderItem OrderItem[]
 
   Applications Applications[]
+}
+
+model FeatureGroup {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  header    String
+  productId String    @db.ObjectId
+  product   Product   @relation(fields: [productId], references: [id])
+  features  Feature[] // one-to-many
+}
+
+model Feature {
+  id      String       @id @default(auto()) @map("_id") @db.ObjectId
+  heading String
+  icon    String?
+  text    String
+  groupId String       @db.ObjectId
+  group   FeatureGroup @relation(fields: [groupId], references: [id])
 }
 
 model Applications {
@@ -96,15 +114,25 @@ model Applications {
 
 // ================= SIZE-BASED PRICING =================
 model ProductSize {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
-  name        String // e.g. "1380 x 3000 mm"
-  price       Float
-  memberPrice Float?
-  inStock     Boolean     @default(true)
-  stockCount  Int         @default(0)
-  productId   String      @db.ObjectId
-  product     Product     @relation(fields: [productId], references: [id])
-  orderItems  OrderItem[]
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  name       String // e.g. "1380 x 3000 mm"
+  price      Float
+  prices     Price[]
+  inStock    Boolean     @default(true)
+  stockCount Int         @default(0)
+  productId  String      @db.ObjectId
+  product    Product     @relation(fields: [productId], references: [id])
+  orderItems OrderItem[]
+}
+
+model Price {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  productSizeId String      @db.ObjectId
+  productSize   ProductSize @relation(fields: [productSizeId], references: [id])
+  price         Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ================= DYNAMIC ATTRIBUTE =================

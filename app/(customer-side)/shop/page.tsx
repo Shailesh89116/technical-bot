@@ -17,7 +17,16 @@ const ShopPage = async () => {
           name: true,
         },
       },
-      sizes: true,
+      featuregroup: {
+        include: {
+          features: true,
+        },
+      },
+      sizes: {
+        include:{
+          prices:true
+        }
+      },
       attributes: true,
       images: true,
       variants: true,

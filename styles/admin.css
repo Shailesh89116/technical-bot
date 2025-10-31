@@ -1,0 +1,13 @@
+@layer components {
+  .admin-container {
+    @apply flex h-screen bg-background;
+  }
+
+  .admin-main {
+    @apply flex-1 flex flex-col overflow-hidden;
+  }
+
+  .admin-content {
+    @apply flex-1 overflow-auto;
+  }
+}

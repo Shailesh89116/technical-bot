@@ -40,7 +40,7 @@ export default function ContactPage() {
             <div>
               <h2 className="mb-6 text-2xl font-medium tracking-tight md:text-4xl">Get in Touch</h2>
               <p className="mb-8 text-sm text-gray-600 md:text-base">
-                Have questions about our products or need a custom solution? Our team is ready to assist you.
+                Have any query about our products or need a custom solution? Our team is ready to assist you.
               </p>
 
               <div className="space-y-6">
@@ -71,7 +71,7 @@ export default function ContactPage() {
                     <MapPin className="h-4 w-4 md:h-5 md:w-5" />
                   </div>
                   <div>
-                    <h3 className="mb-1 text-base font-medium md:text-lg">Showroom Address</h3>
+                    <h3 className="mb-1 text-base font-medium md:text-lg">Experience Center Address</h3>
                     <p className="text-sm text-gray-600 md:text-base">A/16, Patel Shopping Centre, Off Chandavarkar Road,</p>
                     <p className="text-sm text-gray-600 md:text-base"> Borivali West, Mumbai 400092</p>
                   </div>

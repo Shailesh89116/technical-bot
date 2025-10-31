@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { JSX, useCallback, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -13,18 +13,18 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
-  Heart,
   ChevronLeft,
   ChevronRight,
   Plus,
   Minus,
-  Star,
   Shield,
-  Truck,
   Phone,
   Loader2,
   CreditCard,
   ShoppingCart,
+  Sun,
+  CheckCircle,
+  Feather,
 } from "lucide-react";
 import { Products } from "@/dummy-data/type";
 import { useToast } from "@/hooks/use-toast";
@@ -40,7 +40,6 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
     product.sizes?.[0]?.name || ""
   );
   const [quantity, setQuantity] = useState(1);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [isCartLoading, setIsCartLoading] = useState(false);
@@ -48,7 +47,7 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
 
   const getCurrentPrice = () => {
     const sizeOption = product.sizes?.find((s) => s.name === selectedSize);
-    return sizeOption?.price || product.basePrice;
+    return sizeOption?.prices[0].price || product.basePrice;
   };
 
   const currentPrice = getCurrentPrice();
@@ -81,18 +80,37 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
       currentPrice: currentPrice || 0,
       quantity,
       code: product.code || "",
-      specs: `Thickness: ${product.thickness || product.thicknessRange || "Standard"}, Span: ${product.span || "Custom"}`,
+      specs: `Thickness: ${
+        product.thickness || product.thicknessRange || "Standard"
+      }, Span: ${product.span || "Custom"}`,
       attributes: product.attributes,
       category: product.series?.name || product.category?.name || "",
       image: product.images[0]?.url || "",
-      id: crypto.randomUUID()
+      id: crypto.randomUUID(),
     });
     setIsCartLoading(false);
     toast({
       title: "Added to cart",
       description: `${quantity} ${product.name} added to your cart.`,
     });
-  }, [addToCart, currentPrice, product.attributes, product.basePrice, product.category?.name, product.code, product.id, product.images, product.name, product.series?.name, product.span, product.thickness, product.thicknessRange, quantity, selectedSize, toast]);
+  }, [
+    addToCart,
+    currentPrice,
+    product.attributes,
+    product.basePrice,
+    product.category?.name,
+    product.code,
+    product.id,
+    product.images,
+    product.name,
+    product.series?.name,
+    product.span,
+    product.thickness,
+    product.thicknessRange,
+    quantity,
+    selectedSize,
+    toast,
+  ]);
 
   const handleCheckout = useCallback(async () => {
     setIsLoading(true);
@@ -104,19 +122,48 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
       currentPrice: currentPrice || 0,
       quantity,
       code: product.code || "",
-      specs: `Thickness: ${product.thickness || product.thicknessRange || "Standard"}, Span: ${product.span || "Custom"}`,
+      specs: `Thickness: ${
+        product.thickness || product.thicknessRange || "Standard"
+      }, Span: ${product.span || "Custom"}`,
       attributes: product.attributes,
       category: product.series?.name || product.category?.name || "",
       image: product.images[0]?.url || "",
-      id: crypto.randomUUID()
+      id: crypto.randomUUID(),
     });
     setIsLoading(false);
-  }, [addToCartAndCheckout, currentPrice, product.attributes, product.basePrice, product.category?.name, product.code, product.id, product.images, product.name, product.series?.name, product.span, product.thickness, product.thicknessRange, quantity, selectedSize]);
+  }, [
+    addToCartAndCheckout,
+    currentPrice,
+    product.attributes,
+    product.basePrice,
+    product.category?.name,
+    product.code,
+    product.id,
+    product.images,
+    product.name,
+    product.series?.name,
+    product.span,
+    product.thickness,
+    product.thicknessRange,
+    quantity,
+    selectedSize,
+  ]);
+
+
+
+
+
+  const iconMap: Record<string, JSX.Element> = {
+  Heat: <Sun className="w-6 h-6 text-[#FF7A00]" />,
+  Protection: <Shield className="w-6 h-6 text-[#1E3A8A]" />,
+  Modern: <CheckCircle className="w-6 h-6 text-[#0EA5E9]" />,
+  "Light Weight": <Feather className="w-6 h-6 text-[#10B981]" />,
+};
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb Navigation */}
-      <div className="bg-white border-b">
+      {/* <div className="bg-white border-b mt-24">
         <div className="mx-auto max-w-7xl px-6 py-4">
           <nav className="flex items-center space-x-2 text-sm text-gray-500">
             <Link href="/" className="hover:text-gray-900 transition-colors">
@@ -139,11 +186,11 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
             <span>/</span>
             <span className="text-gray-900 font-medium">{product.name}</span>
           </nav>
-        </div>
-      </div>
+        </div>  
+      </div> */}
 
       {/* Hero Section */}
-      <div className="bg-white">
+      <div className="bg-white mt-5">
         <div className="mx-auto max-w-7xl px-6 py-8 lg:py-16">
           {/* Product Header */}
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
@@ -176,21 +223,6 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
                     " Series"
                   : ""}
               </p>
-            </div>
-
-            {/* Customer Rating and Reviews */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                  />
-                ))}
-                <span className="text-sm text-gray-600 ml-1">
-                  4.8 (124 reviews)
-                </span>
-              </div>
             </div>
           </div>
 
@@ -365,7 +397,7 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
                         <div className="flex items-center justify-between w-full">
                           <span className="font-medium">{sizeOption.name}</span>
                           <span className="ml-4 text-[#02a89e] font-semibold">
-                            ₹{sizeOption.price.toLocaleString()}
+                            ₹{sizeOption?.prices[0]?.price}
                           </span>
                         </div>
                       </SelectItem>
@@ -451,32 +483,18 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="h-12 rounded-xl border-2 border-gray-200 hover:border-gray-300 text-base font-medium bg-transparent"
-                    onClick={() => setIsWishlisted(!isWishlisted)}
-                  >
-                    <Heart
-                      className={`h-4 w-4 mr-2 ${
-                        isWishlisted ? "fill-current text-red-500" : ""
-                      }`}
-                    />
-                    Wishlist
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="h-12 rounded-xl border-2 border-gray-200 hover:border-gray-300 text-base font-medium bg-transparent"
+                <div className="grid grid-cols-1 gap-3">
+                  <Link
+                    href="tel:9594084626"
+                    className="flex items-center justify-center h-12 rounded-xl border-2 border-gray-200 hover:border-gray-300 text-base font-medium bg-transparent"
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     Call Expert
-                  </Button>
+                  </Link>
                 </div>
 
                 {/* Trust Signals */}
-                <div className="flex items-center justify-center gap-6 pt-4 text-sm text-gray-600">
+                {/* <div className="flex items-center justify-center gap-6 pt-4 text-sm text-gray-600">
                   <div className="flex items-center gap-1">
                     <Shield className="h-4 w-4" />
                     <span>Secure Payment</span>
@@ -485,8 +503,49 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
                     <Truck className="h-4 w-4" />
                     <span>Fast Shipping</span>
                   </div>
-                </div>
+                </div> */}
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Feature Section */}
+      <div className="bg-white py-12 sm:py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-light mb-4">Features</h2>
+            <p className="text-lg sm:text-xl text-gray-600">
+              {product.featuregroup[0].header}
+            </p>
+          </div>
+          <div key={product.featuregroup[0].id} className="mb-16">
+
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {product.featuregroup[0].features.map((feature) => (
+                <div
+                  key={feature.id}
+                  className="bg-white rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col items-start gap-3 border border-gray-100"
+                >
+                  {/* Icon */}
+                  <div className="p-3 rounded-full bg-[#E0F2FE]">
+                    {iconMap[feature.heading] || (
+                      <CheckCircle className="w-6 h-6 text-[#1E3A8A]" />
+                    )}
+                  </div>
+
+                  {/* Heading */}
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {feature.heading}
+                  </h3>
+
+                  {/* Text */}
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {feature.text}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -609,7 +668,7 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
       </div>
 
       {/* Related Products */}
-      <div className="bg-gray-50 py-20">
+      {/* <div className="bg-gray-50 py-20">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-light mb-4">You might also like</h2>
@@ -618,7 +677,7 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
             </p>
           </div>
 
-          {/* <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {relatedProducts.map((relatedProduct) => (
               <Link key={relatedProduct.id} href={`/product/${relatedProduct.id}`} className="group">
                 <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1">
@@ -648,9 +707,9 @@ export default function PremiumProductPage({ product }: ProductPageProps) {
                 </div>
               </Link>
             ))}
-          </div> */}
+          </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Customer Support Section */}
       <div className="bg-white py-16">

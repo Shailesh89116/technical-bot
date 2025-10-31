@@ -24,6 +24,13 @@ export function HeroBanner() {
 
   const carouselItems: CarouselItem[] = [
     {
+      image: "/sanitary-banner.jpg",
+      title: "Sanitary Acrylic",
+      subtitle: "Smooth, strong & hygienic sheets for modern bathroom designs",
+      textColor: "text-white",
+      // textShadow: true,
+    },
+    {
       image: "/heatcut-banner.jpg",
       title: "Transparent Elegance",
       subtitle: "Premium acrylic roofing solutions for modern spaces",
@@ -36,13 +43,7 @@ export function HeroBanner() {
       subtitle: "Transform your spaces with our premium acrylic solutions",
       textColor: "text-white",
     },
-    {
-      image: "/sanitary-banner.jpg",
-      title: "Sanitary Acrylic",
-      subtitle: "Smooth, strong & hygienic sheets for modern bathroom designs",
-      textColor: "text-white",
-      // textShadow: true,
-    },
+    
     {
       image: "/transparent-acrylic-roof-sheet-closeup-600nw-1498463228.webp",
       title: "Heat Cut Series",

@@ -6,7 +6,6 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    // Destructure input
     const {
       name,
       code,
@@ -25,9 +24,10 @@ export async function POST(req: Request) {
       attributes,
       images,
       variants,
+      featuregroup,
+      applications,
     } = data;
 
-    // Create product with nested dependencies
     const product = await prismadb.product.create({
       data: {
         name,
@@ -43,16 +43,77 @@ export async function POST(req: Request) {
         features,
         application,
         maxCustomSize,
-        sizes: { create: sizes },
-        attributes: { create: attributes },
-        images: { create: images },
-        variants: { create: variants },
+
+        // --- Sizes (with nested Prices) ---
+        sizes: sizes?.length
+          ? {
+              create: sizes.map((s: any) => ({
+                name: s.name,
+                price: s.price,
+                inStock: s.inStock ?? true,
+                stockCount: s.stockCount ?? 0,
+                prices: s.prices?.length
+                  ? {
+                      create: s.prices.map((p: any) => ({
+                        price: p.price,
+                      })),
+                    }
+                  : undefined,
+              })),
+            }
+          : undefined,
+
+        // --- Attributes ---
+        attributes: attributes?.length ? { create: attributes } : undefined,
+
+        // --- Images ---
+        images: images?.length ? { create: images } : undefined,
+
+        // --- Variants ---
+        variants: variants?.length ? { create: variants } : undefined,
+
+        // --- Feature Groups ---
+        featuregroup: featuregroup?.length
+          ? {
+              create: featuregroup.map((group: any) => ({
+                header: group.header,
+                features: group.features
+                  ? {
+                      create: group.features.map((f: any) => ({
+                        heading: f.heading,
+                        icon: f.icon,
+                        text: f.text,
+                      })),
+                    }
+                  : undefined,
+              })),
+            }
+          : undefined,
+
+        // --- Applications ---
+        Applications: applications?.length
+          ? {
+              create: applications.map((app: any) => ({
+                description: app.description,
+                images: app.images || [],
+              })),
+            }
+          : undefined,
       },
+
       include: {
-        sizes: true,
+        sizes: {
+          include: {
+            prices: true,
+          },
+        },
         attributes: true,
         images: true,
         variants: true,
+        featuregroup: {
+          include: { features: true },
+        },
+        Applications: true,
       },
     });
 

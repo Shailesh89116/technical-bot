@@ -36,7 +36,7 @@ export default function ProductCard({ product, isWishlisted, onToggleWishlist }:
   }
 
   return (
-    <div ref={cardRef} className="group cursor-pointer">
+    <div ref={cardRef} className="group cursor-pointer shadow-md">
       <Link href={`/product/${product.id}`}>
         <div className="relative aspect-square mb-4 overflow-hidden md:rounded-[28px] bg-gray-50">
           <Image

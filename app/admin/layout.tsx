@@ -1,8 +1,14 @@
+import type React from "react";
 import type { Metadata } from "next";
+import { Sidebar } from "@/components/sidebar";
+import { TopNav } from "@/components/top-nav";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { Navigation } from "@/components/navigation";
-import { Footer } from "@/components/footer";
+
+export const metadata: Metadata = {
+  title: "Admin Portal",
+  description: "E-commerce Admin Dashboard",
+};
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,26 +20,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Shinkolite Admin",
-  description: "Shinkolite admin portal to manage products and orders",
-};
-
-export default function RootLayout({
+export default function AdminLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-     
-            <Navigation />
-            <main>{children}</main>
-            <Footer />
-         
+        <div className="flex h-screen bg-background">
+          <Sidebar />
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <TopNav />
+            <main className="flex-1 overflow-auto">{children}</main>
+          </div>
+        </div>
       </body>
     </html>
   );

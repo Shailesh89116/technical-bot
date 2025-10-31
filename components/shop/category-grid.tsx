@@ -177,7 +177,7 @@ export default function ProductsPage({products}: {products: Products[]}) {
           {/* Filter Chips */}
           <div className="space-y-4">
             {/* Thickness */}
-            <div className="flex items-center space-x-3">
+            {filterOptions.thickness.length !== 0 && <div className="flex items-center space-x-3">
               <span className="text-sm text-gray-600 w-20">Thickness</span>
               <div className="flex flex-wrap gap-2">
                 {filterOptions.thickness.map((thickness) => (
@@ -193,10 +193,10 @@ export default function ProductsPage({products}: {products: Products[]}) {
                   />
                 ))}
               </div>
-            </div>
+            </div>}
 
             {/* Size */}
-            <div className="flex items-center space-x-3">
+            {filterOptions.sizes.length !== 0 &&<div className="flex items-center space-x-3">
               <span className="text-sm text-gray-600 w-20">Size</span>
               <div className="flex flex-wrap gap-2">
                 {filterOptions.sizes.slice(0, 8).map((size) => (
@@ -212,10 +212,10 @@ export default function ProductsPage({products}: {products: Products[]}) {
                   />
                 ))}
               </div>
-            </div>
+            </div>}
 
             {/* Category */}
-            <div className="flex items-center space-x-3">
+          { filterOptions.categories.length !== 0 && <div className="flex items-center space-x-3">
               <span className="text-sm text-gray-600 w-20">Category</span>
               <div className="flex flex-wrap gap-2">
                 {filterOptions.categories.map((category) => (
@@ -231,7 +231,7 @@ export default function ProductsPage({products}: {products: Products[]}) {
                   />
                 ))}
               </div>
-            </div>
+            </div>}
           </div>
 
           {/* Clear filters */}
@@ -419,7 +419,7 @@ export default function ProductsPage({products}: {products: Products[]}) {
               <Link
                 key={product.id}
                 href={`/product/${product.id}`}
-                className="group block bg-white md:rounded-lg border hover:shadow-lg transition-shadow duration-200"
+                className="group block bg-white md:rounded-lg border hover:shadow-lg shadow-md  transition-shadow duration-200"
               >
                 <div className="aspect-square relative overflow-hidden md:rounded-t-lg bg-gray-100">
           
