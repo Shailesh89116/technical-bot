@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export function ProductDialog({ open, onOpenChange, product }) {
+export function ProductDialog({ open, onOpenChange, product }:any) {
   const [formData, setFormData] = useState(
     product || {
       name: "",
@@ -22,9 +22,9 @@ export function ProductDialog({ open, onOpenChange, product }) {
     },
   )
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData((prev:any) => ({ ...prev, [name]: value }))
   }
 
   return (

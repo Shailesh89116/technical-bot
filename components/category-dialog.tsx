@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 
-export function CategoryDialog({ open, onOpenChange, category }) {
+export function CategoryDialog({ open, onOpenChange, category }:any) {
   const [formData, setFormData] = useState(
     category || {
       name: "",
@@ -17,9 +17,9 @@ export function CategoryDialog({ open, onOpenChange, category }) {
     },
   )
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     const { name, value, type, checked } = e.target
-    setFormData((prev) => ({
+    setFormData((prev:any) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }))

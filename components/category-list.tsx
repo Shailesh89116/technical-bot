@@ -16,7 +16,7 @@ export function CategoryList() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState(null)
 
-  const handleEdit = (category) => {
+  const handleEdit = (category:any) => {
     setSelectedCategory(category)
     setIsDialogOpen(true)
   }

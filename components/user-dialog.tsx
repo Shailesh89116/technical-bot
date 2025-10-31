@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-export function UserDialog({ open, onOpenChange, user }) {
+export function UserDialog({ open, onOpenChange, user }:any) {
   const [formData, setFormData] = useState(
     user || {
       name: "",
@@ -18,13 +18,13 @@ export function UserDialog({ open, onOpenChange, user }) {
     },
   )
 
-  const handleChange = (e) => {
+  const handleChange = (e:any) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData((prev:any) => ({ ...prev, [name]: value }))
   }
 
-  const handleRoleChange = (value) => {
-    setFormData((prev) => ({ ...prev, role: value }))
+  const handleRoleChange = (value:any) => {
+    setFormData((prev:any) => ({ ...prev, role: value }))
   }
 
   return (

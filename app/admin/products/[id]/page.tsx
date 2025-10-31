@@ -148,7 +148,7 @@ export default function ProductDetailPage() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const product = DUMMY_PRODUCT as Product & { id: string }
+  const product = DUMMY_PRODUCT as unknown as Product & { id: string }
 
   const handleDelete = async () => {
     setIsDeleting(true)

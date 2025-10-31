@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState } from "react"
 
-export function OrderDetailDialog({ open, onOpenChange, order }) {
+export function OrderDetailDialog({ open, onOpenChange, order }:any) {
   const [status, setStatus] = useState(order?.status || "PENDING")
 
   if (!order) return null

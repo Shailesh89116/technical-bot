@@ -75,7 +75,7 @@ export function OrderList() {
     return matchesSearch && matchesStatus
   })
 
-  const handleViewOrder = (order) => {
+  const handleViewOrder = (order:any) => {
     setSelectedOrder(order)
     setIsDetailOpen(true)
   }
@@ -149,7 +149,7 @@ export function OrderList() {
                     <td className="py-3 px-4 text-foreground">{order.items}</td>
                     <td className="py-3 px-4 font-medium text-foreground">${order.totalAmount.toFixed(2)}</td>
                     <td className="py-3 px-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[order.status]}`}>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[order.status as keyof typeof statusColors]}`}>
                         {order.status}
                       </span>
                     </td>
